@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://your_database_user:your_database_password@db:5432/your_database_name
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=your_database_user
+      - POSTGRES_PASSWORD=your_database_password
+      - POSTGRES_DB=your_database_name
