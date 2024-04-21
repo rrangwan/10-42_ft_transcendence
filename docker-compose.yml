@@ -13,8 +13,9 @@ services:
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runsslserver 0.0.0.0:8000 --certificate /code/cert.pem --key /code/key.pem
     volumes:
+      - ./path_to_ssl_files:/code/ssl
       - .:/code
     ports:
       - "8000:8000"

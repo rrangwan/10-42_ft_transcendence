@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
-from django.http import HttpResponse
+def index(request):
+    return render(request, 'index.html')
 
-def home(request):
-    return HttpResponse("Welcome to my Django project!")
+def pong_game(request):
+    return render(request, 'pong_game.html')

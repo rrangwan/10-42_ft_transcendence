@@ -4,14 +4,13 @@
 # https://docs.djangoproject.com/en/5.0/topics/http/urls/
 
 from django.contrib import admin
-from django.urls import path, include  # Make sure to include the 'include' function
-from django.urls import path
-from webapp.views import home
+from django.urls import path, include  
+from webapp.views import index
+from webapp.views import pong_game 
 
 urlpatterns = [
-    path('', home, name='home'),
+    path('', index, name='index'),
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-    # Your other URLs...
+    path('pong/', pong_game, name='pong_game'),
 ]
 

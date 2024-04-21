@@ -17,19 +17,15 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-fy)13lc0*ztgn1i*9ma@2tvfts=g%0%h6l1u#ie=ge_u7qy0*w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,19 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',  # Needed for allauth
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'custom_providers',  # Your custom provider app
+    'sslserver',
 ]
-
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
-
-SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,7 +44,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # Required by django-allauth
 ]
 
 ROOT_URLCONF = 'trans_project.urls'
@@ -82,19 +66,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'trans_project.wsgi.application'
 
-# Database
-# DATABASES = {
-#    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
-# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'trans_db',
-        'USER': 'rrangwan',
-        'PASSWORD': 'raj123',
-        'HOST': 'db',  # Use the Docker service name for the database
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
 
 # Password validation
@@ -127,15 +100,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SOCIALACCOUNT_PROVIDERS = {
-    'fortytwo': {
-        'APP': {
-            'client_id': 'your_client_id',
-            'secret': 'your_secret_key',
-            'key': ''
-        }
-    }
-}
+SSL_CERTIFICATE_PATH = os.getenv('SSL_CERTIFICATE_PATH', '/code/cert.pem')
+SSL_PRIVATE_KEY_PATH = os.getenv('SSL_PRIVATE_KEY_PATH', '/code/key.pem')

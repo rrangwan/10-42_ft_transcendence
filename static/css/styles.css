@@ -1,0 +1,31 @@
+        
+.game-container {
+    width: 600px;
+    height: 400px;
+    position: relative;
+    background-color: black;
+    margin: 20px auto;
+}
+.paddle {
+    position: absolute;
+    width: 15px;
+    height: 60px;
+    background-color: white;
+}
+#paddle1 { /* Left paddle */
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#paddle2 { /* Right paddle */
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#paddle3 { /* Top paddle */
+    left: 50%;
+    top: 20px;
+    width: 60px; /* Wider paddle for the top */
+    height: 15px;
+    transform: translateX(-50%);
+}
