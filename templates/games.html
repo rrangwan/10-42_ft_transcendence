@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<main>
+    <p>Choose a game:</p>
+    <table class="table">
+        <tr>
+            <td>
+                <div class="thumbnail-container">
+                    <a href="{% url 'pong_game' %}">
+                        <img src="{% static 'images/pong_thumbnail.jpg' %}" alt="Pong" class="thumbnail-img">
+                        <p class="thumbnail-title">Pong</p>
+                    </a>
+                </div>
+            </td>
+            <!-- Repeat this pattern for other game thumbnails and titles -->
+        </tr>
+        <!-- Add more rows and games if needed -->
+    </table>
+</main>
+{% endblock %}

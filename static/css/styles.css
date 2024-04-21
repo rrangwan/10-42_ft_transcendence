@@ -1,11 +1,4 @@
-        
-.game-container {
-    width: 600px;
-    height: 400px;
-    position: relative;
-    background-color: black;
-    margin: 20px auto;
-}
+
 .paddle {
     position: absolute;
     width: 15px;
@@ -22,10 +15,40 @@
     top: 50%;
     transform: translateY(-50%);
 }
-#paddle3 { /* Top paddle */
+.thumbnail-img {
+    width: 100px; 
+    height: auto; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+.thumbnail-container {
+    text-align: center; /* Center-align content */
+}
+
+.thumbnail-img {
+    width: 100px; 
+    height: auto; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.thumbnail-title {
+    margin-top: 5px; 
+}
+.game-container {
+    position: relative;
+    max-width: 600px;
+    height: 400px;  /* Adjust based on your preference */
+    background-color: #000;
+}
+
+.ball {
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
     left: 50%;
-    top: 20px;
-    width: 60px; /* Wider paddle for the top */
-    height: 15px;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
 }
