@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>User Profile</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="nickname" class="form-label">Nickname</label>
+        {{ form.nickname }}
+        {% if form.nickname.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.nickname.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label for="profile_pic" class="form-label">Profile Picture</label>
+        {{ form.profile_pic }}
+        {% if form.profile_pic.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.profile_pic.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if user.userprofile.profile_pic %}
+            <img src="{{ user.userprofile.profile_pic.url }}" alt="Profile Pic" style="width: 150px;">
+        {% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+{% endblock %}

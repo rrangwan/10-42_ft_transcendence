@@ -234,8 +234,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateScore(player) {
         const scoreElement = player === 'player1' ? player1Score : player2Score;
         let score = parseInt(scoreElement.textContent.split(': ')[1]) + 1;
-        scoreElement.textContent = `Player ${player.slice(-1)}: ${score}`;
+        let playerLabel = player === 'player1' ? playerName : 'Player 2';  // Use player name or "Player 2"
+        scoreElement.textContent = `${playerLabel}: ${score}`;
     }
+    
 
     function checkGameOver(ballLeft) {
         if (ballLeft + ball.offsetWidth < 0) {
@@ -252,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
    
 
     function startGameTimer() {
-        let timeLeft = 60; // Set to 1 minute
+        let timeLeft = 10; // Set to 60 later
         gameTimerDisplay.textContent = `Time Left: ${formatTime(timeLeft)}`;
         const timer = setInterval(() => {
             timeLeft--;
@@ -277,10 +279,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const score2 = parseInt(player2Score.textContent.split(':')[1].trim());
         let result = 'Draw!';
         if (score1 > score2) {
-            result = 'Player 1 Wins!';
+            result = `${playerName} Wins!`;  // Use the player name
         } else if (score2 > score1) {
             result = 'Player 2 Wins!';
         }
         countdownDisplay.textContent = result;
     }
+    
 });

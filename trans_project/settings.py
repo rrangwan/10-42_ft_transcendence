@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sslserver',
+    'webapp',
 ]
 
 MIDDLEWARE = [
@@ -66,9 +68,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'trans_project.wsgi.application'
 
+
+env = environ.Env()
+environ.Env.read_env()
+
+
+
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    'default': env.db()
 }
+
+# DATABASES = {
+#     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+# }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -106,8 +118,17 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Media files (User-uploaded files)
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / "media"
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SSL_CERTIFICATE_PATH = os.getenv('SSL_CERTIFICATE_PATH', '/code/cert.pem')
 SSL_PRIVATE_KEY_PATH = os.getenv('SSL_PRIVATE_KEY_PATH', '/code/key.pem')
+
+LOGIN_REDIRECT_URL = 'index' 
+
+LOGIN_URL = '/login/'
