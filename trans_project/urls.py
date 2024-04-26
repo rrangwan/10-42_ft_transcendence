@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from webapp.views import index, pong_game, games, register, user_profile
+from webapp.views import index, pong_game, games, register, user_profile, save_game_result, game_stats
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -14,4 +14,6 @@ urlpatterns = [
     path('games/', games, name='games'),
     path('pong/', pong_game, name='pong_game'),
     path('profile/', user_profile, name='profile'),
+    path('save_game_result/', save_game_result, name='save_game_result'),
+    path('stats/', game_stats, name='stats'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

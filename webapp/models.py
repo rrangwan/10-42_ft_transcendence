@@ -14,9 +14,22 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.nickname
 
+# Define game type choices
+GAME_TYPE_CHOICES = (
+    (1, 'Classic Pong'),
+    (2, 'Classic Pong Tournament'),
+    (3, 'Classic Pong AI'),
+    (4, 'Modified Pong'),
+    (5, 'Modified Pong Tournament'),
+    (6, 'Modified Pong AI'),
+    (7, 'Tic-Tac-Toe'),
+    (8, 'Tic-Tac-Toe Tournament'),
+    (9, 'Tic-Tac-Toe AI'),
+)
+
 class Game(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    game_type = models.IntegerField()  #  game types are represented by integers, 1 is classic pong
+    game_type = models.IntegerField()   
     game_result = models.CharField(max_length=4)  # 'win', 'lose', 'draw'
     date_time = models.DateTimeField(auto_now_add=True)
 

@@ -71,13 +71,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     
-
-    // function resetBall() {
-    //     ball.style.left = `${gameArea.clientWidth / 2 - ball.offsetWidth / 2}px`;
-    //     ball.style.top = `${gameArea.clientHeight / 2 - ball.offsetHeight / 2}px`;
-    //     ballSpeedX = Math.abs(ballSpeedX); // Reset the ball speed direction
-    // }
-
     function startGame() {
         console.log("Game starting...");
         resetBall();
@@ -106,27 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-
-    // function movePaddle(event) {
-    //     const paddleSpeed = 10;
-    //     const topBoundary = 0;
-    //     const bottomBoundary = gameArea.clientHeight - paddle1.offsetHeight;
-
-    //     switch (event.key) {
-    //         case 'w':
-    //             paddle1.style.top = `${Math.max(paddle1.offsetTop - paddleSpeed, topBoundary)}px`;
-    //             break;
-    //         case 's':
-    //             paddle1.style.top = `${Math.min(paddle1.offsetTop + paddleSpeed, bottomBoundary)}px`;
-    //             break;
-    //         case 'ArrowUp':
-    //             paddle2.style.top = `${Math.max(paddle2.offsetTop - paddleSpeed, topBoundary)}px`;
-    //             break;
-    //         case 'ArrowDown':
-    //             paddle2.style.top = `${Math.min(paddle2.offsetTop + paddleSpeed, bottomBoundary)}px`;
-    //             break;
-    //     }
-    // }
 
     function moveBall() {
         movementInterval = setInterval(function() {
@@ -176,47 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 20);
     }
     
-
-    // function moveBall() {
-    //     movementInterval = setInterval(function() {
-    //         let nextX = ball.offsetLeft + ballSpeedX;
-    //         let nextY = ball.offsetTop + ballSpeedY;
-
-    //         // Collision with top or bottom
-    //         if (nextY <= 0 || nextY + ball.offsetHeight >= gameArea.clientHeight) {
-    //             ballSpeedY *= -1;
-    //         }
-
-    //         // Collision with paddles
-    //         if (checkPaddleCollision(nextX, nextY)) {
-    //             ballSpeedX *= -1; // Reverse the horizontal direction
-    //         }
-
-    //         // Handle player-ball collisions
-    //         if (nextX - ball.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
-    //             if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball.offsetHeight >= paddle1.offsetTop) {
-    //                 nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball.offsetWidth;
-    //                 ballSpeedX = 2; // Set the ball's horizontal speed
-    //                 ballSpeedY *= -1; // Reverse the vertical direction
-    //             }
-    //         }
-
-    //         if (nextX <= paddle2.offsetLeft + paddle2.offsetWidth && nextX + ball.offsetWidth >= paddle2.offsetLeft) {
-    //             if (nextY <= paddle2.offsetTop + paddle2.offsetHeight && nextY + ball.offsetHeight >= paddle2.offsetTop) {
-    //                 nextX = paddle2.offsetLeft - ball.offsetWidth;
-    //                 ballSpeedX = -2; // Set the ball's horizontal speed
-    //                 ballSpeedY *= -1; // Reverse the vertical direction
-    //             }
-    //         }
-
-    //         // Update ball position
-    //         ball.style.left = `${nextX}px`;
-    //         ball.style.top = `${nextY}px`;
-
-    //         // Check for game over condition
-    //         checkGameOver(ball.offsetLeft);
-    //     }, 20);
-    // }
 
     function checkPaddleCollision(nextX, nextY) {
         let ballBounds = ball.getBoundingClientRect();
@@ -274,16 +205,47 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 
+    //using cookie to handle CSRF (Cross-Site Request Forgery) tokens when making POST requests
+    //to comply with Django's security requirements
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+
+    //POST request made from JavaScript so including CSRF token for security.
     function announceWinner() {
+        const csrfToken = getCookie('csrftoken');
         const score1 = parseInt(player1Score.textContent.split(':')[1].trim());
         const score2 = parseInt(player2Score.textContent.split(':')[1].trim());
-        let result = 'Draw!';
+        let result = 'Draw';
         if (score1 > score2) {
-            result = `${playerName} Wins!`;  // Use the player name
+            result = 'Win';
         } else if (score2 > score1) {
-            result = 'Player 2 Wins!';
+            result = 'Lose';
         }
-        countdownDisplay.textContent = result;
+    
+        countdownDisplay.textContent = result === 'Win' ? `${playerName} Wins!` : (result === 'Lose' ? 'Player 2 Wins!' : 'Draw!');
+    
+        fetch('/save_game_result/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: `result=${result}`
+        }).then(response => response.json())
+          .then(data => console.log(data.message));
     }
     
 });

@@ -4,7 +4,10 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from .forms import UserProfileForm, CustomUserCreationForm
-from .models import UserProfile
+from .models import UserProfile, Game, GAME_TYPE_CHOICES
+from django.http import JsonResponse
+from django.utils import timezone
+
 
 # Home page view, accessible to everyone, no need to prevent caching here
 def index(request):
@@ -56,3 +59,35 @@ def user_profile(request):
     else:
         form = UserProfileForm(instance=user_profile)
     return render(request, 'profile.html', {'form': form})
+
+
+@login_required
+@never_cache
+def save_game_result(request):
+    if request.method == "POST":
+        user_profile = UserProfile.objects.get(user=request.user)  # Get the user profile from the logged-in user
+        game_result = request.POST.get('result')
+
+        new_game = Game(
+            user_profile=user_profile,
+            game_type=1,
+            game_result=game_result,
+            date_time=timezone.now()
+        )
+        new_game.save()
+
+        return JsonResponse({"message": "Game result saved successfully!"}, status=200)
+
+
+@login_required
+@never_cache
+def game_stats(request):
+    games = Game.objects.filter(user_profile__user=request.user).order_by('-date_time')
+    game_types = dict(GAME_TYPE_CHOICES)  # This maps game type IDs to names
+
+    # Organize games by type and include the name directly
+    games_by_type = {}
+    for type_id, type_name in game_types.items():
+        games_by_type[type_name] = [game for game in games if game.game_type == type_id]
+
+    return render(request, 'stats.html', {'games_by_type': games_by_type})
