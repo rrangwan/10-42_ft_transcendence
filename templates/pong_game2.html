@@ -1,9 +1,43 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
-<main>
-    <p>Welcome to the Pong Game!</p>
-    <div id="pong-game" class="game-container"></div>
-    <!-- Additional game setup scripts can be included here -->
+<script type="text/javascript">
+    // Initialize the playerName with the Django nickname to use in the JavaScript
+    var playerName = "{{ nickname }}";
+</script>
+<main class="container mt-4">
+    <!-- Scoreboard and Timer in the upper row -->
+    <div class="row justify-content-center text-center">
+        <div class="col-md-4">
+            <h3 id="player1-score">{{ nickname }}: 0</h3>  <!-- Using Django variable for initial score display -->
+        </div>
+        <div class="col-md-4">
+            <h3 id="game-timer">Time Left: 0:20</h3> <!-- Timer display -->
+        </div>
+        <div class="col-md-4">
+            <h3 id="player2-score">Player 2: 0</h3>  <!-- Static "Player 2" as before -->
+        </div>
+    </div>
+    <!-- Start button in a separate row for better control -->
+    <div class="row justify-content-center my-3">
+        <div class="col-12 text-center">
+            <button id="start-button" class="btn btn-primary">Start Game</button>
+        </div>
+        <div class="col-md-4 text-center">
+            <span id="countdown"></span>  <!-- Countdown display area -->
+        </div>
+    </div>
+    <!-- Game area in the row below -->
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div id="pong-game" class="game-container"></div>
+        </div>
+    </div>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/classic_game2.js' %}"></script>
 {% endblock %}

@@ -2,6 +2,7 @@ from django import forms
 from .models import UserProfile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -23,11 +24,42 @@ class UserProfileForm(forms.ModelForm):
         return nickname
 
 class CustomUserCreationForm(UserCreationForm):
-    nickname = forms.CharField(required=True, max_length=9, help_text='Nickname (defaults to username).')
+    username = forms.CharField(
+        label="Username", 
+        help_text="Enter a username between 2-9 characters. Only letters and numbers allowed.",
+        max_length=9,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    nickname = forms.CharField(
+        label="Nickname", 
+        required=True, 
+        max_length=9, 
+        help_text='Enter a nickname, it will default to your username if left blank.',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    password1 = forms.CharField(
+        label="Password",
+        help_text="Your password must be at least 8 characters long.",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    password2 = forms.CharField(
+        label="Confirm Password",
+        help_text="Enter the same password as before, for verification.",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )    
+    
 
     class Meta:
         model = User
         fields = ('username', 'nickname', 'password1', 'password2')
+    
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if not username.isalnum():
+            raise forms.ValidationError("Username should only contain letters and numbers.")
+        if len(username) < 2 or len(username) > 9:
+            raise forms.ValidationError("Username must be between 2 and 9 characters long.")
+        return username
 
     def save(self, commit=True):
         user = super().save(commit=False)

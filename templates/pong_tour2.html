@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<script type="text/javascript">
+    // Initialize the playerName with the Django nickname to use in the JavaScript
+    var playerName = "{{ nickname }}";
+</script>
+<main class="container mt-4">
+    <div class="row justify-content-center text-center">
+        <!-- Input fields for player aliases -->
+        <div class="col-md-4" id="alias-inputs">
+            <input id="player2-alias" type="text" placeholder="Enter Player 2 Alias" class="form-control mb-2">
+            <input id="player3-alias" type="text" placeholder="Enter Player 3 Alias" class="form-control mb-2">
+            <button id="submit-aliases" class="btn btn-primary mb-2">Submit Aliases</button>
+        </div>
+    </div>
+    <!-- Score tables stacked vertically -->
+    <div class="row justify-content-center text-center my-3">
+        <div class="col-md-4">
+            <h4>Total Game Score</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="current-name-player1">{{ nickname }}</td>
+                        <td id="current-score-player1">0</td>
+                    </tr>
+                    <tr>
+                        <td id="current-name-player2">Player 2</td>
+                        <td id="current-score-player2">0</td>
+                    </tr>
+                    <tr>
+                        <td id="current-name-player3">Player 3</td>
+                        <td id="current-score-player3">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Start button hidden initially -->
+    <div class="row justify-content-center my-3">
+        <div class="col-md-4 text-center">
+            <span id="countdown"></span>  <!-- Countdown display area -->
+        </div>
+        <div class="row justify-content-center text-center my-3">
+            <button id="start-button" class="btn btn-primary" style="display: none;">Start Tournament</button>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h3 id="game-timer">Time Left: 0:30</h3> <!-- Timer display -->
+    </div>
+    <!-- Game area in the row below -->
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div id="pong-game" class="game-container"></div>
+        </div>
+    </div>
+    <div class="spacer" style="height: 50px;"></div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/tournament_classic2.js' %}"></script>
+{% endblock %}

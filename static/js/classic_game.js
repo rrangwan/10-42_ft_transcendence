@@ -148,6 +148,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 20);
     }
     
+    // Add event listener to prevent default scrolling behavior
+    document.addEventListener('keydown', function(event) {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+            event.preventDefault();
+        }
+    });
 
     function checkPaddleCollision(nextX, nextY) {
         let ballBounds = ball.getBoundingClientRect();
@@ -185,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
    
 
     function startGameTimer() {
-        let timeLeft = 10; // Set to 60 later
+        let timeLeft = 20; // can change
         gameTimerDisplay.textContent = `Time Left: ${formatTime(timeLeft)}`;
         const timer = setInterval(() => {
             timeLeft--;
@@ -237,13 +243,15 @@ document.addEventListener('DOMContentLoaded', function () {
     
         countdownDisplay.textContent = result === 'Win' ? `${playerName} Wins!` : (result === 'Lose' ? 'Player 2 Wins!' : 'Draw!');
     
+        // classic pong
+        let game_type = 1;
         fetch('/save_game_result/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-CSRFToken': csrfToken
             },
-            body: `result=${result}`
+            body: `result=${result}&game_type=${game_type}`
         }).then(response => response.json())
           .then(data => console.log(data.message));
     }

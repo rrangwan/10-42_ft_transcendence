@@ -7,6 +7,8 @@ from .forms import UserProfileForm, CustomUserCreationForm
 from .models import UserProfile, Game, GAME_TYPE_CHOICES
 from django.http import JsonResponse
 from django.utils import timezone
+import pytz
+
 
 
 # Home page view, accessible to everyone, no need to prevent caching here
@@ -39,9 +41,37 @@ def games(request):
 def pong_game(request):
     user_profile = UserProfile.objects.get(user=request.user)
     context = {
-        'nickname': user_profile.nickname,  # This is the nickname from the user's profile
+        'nickname': user_profile.nickname,  
     }
     return render(request, 'pong_game.html', context)
+
+@login_required
+@never_cache
+def pong_game2(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,  
+    }
+    return render(request, 'pong_game2.html', context)
+
+@login_required
+@never_cache
+def pong_tour(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,
+    }
+    return render(request, 'pong_tour.html', context)
+
+
+@login_required
+@never_cache
+def pong_tour2(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,
+    }
+    return render(request, 'pong_tour2.html', context)
 
 # User profile page, requires login and should not be cached
 @login_required
@@ -64,15 +94,19 @@ def user_profile(request):
 @login_required
 @never_cache
 def save_game_result(request):
-    if request.method == "POST":
-        user_profile = UserProfile.objects.get(user=request.user)  # Get the user profile from the logged-in user
-        game_result = request.POST.get('result')
+    
+    timezone.activate(pytz.timezone('Etc/GMT-4'))
 
+    if request.method == "POST":
+        user_profile = UserProfile.objects.get(user=request.user)  # Ensure the user profile is obtained from the logged-in user
+        game_result = request.POST.get('result')
+        game_type = request.POST.get('game_type')  
+        game_type = int(game_type)
         new_game = Game(
             user_profile=user_profile,
-            game_type=1,
+            game_type=game_type, 
             game_result=game_result,
-            date_time=timezone.now()
+            date_time=timezone.now()  
         )
         new_game.save()
 
