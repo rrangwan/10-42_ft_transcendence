@@ -25,6 +25,9 @@ GAME_TYPE_CHOICES = (
     (7, 'Tic-Tac-Toe'),
     (8, 'Tic-Tac-Toe Tournament'),
     (9, 'Tic-Tac-Toe AI'),
+    (10, 'Modified Tic-Tac-Toe'),
+    (11, 'Modified Tic-Tac-Toe Tournament'),
+    (12, 'Modified Tic-Tac-Toe AI'),
 )
 
 class Game(models.Model):

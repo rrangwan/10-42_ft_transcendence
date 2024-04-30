@@ -8,23 +8,31 @@
 {% load static %}
 <h2>Game Statistics</h2>
 {% for type_name, games_list in games_by_type.items %}
-    <div class="mt-4">
+    <div class="game-stats-section">
         <h4>{{ type_name }} Games</h4>
         <div class="list-group">
             {% for game in games_list %}
-                <a href="#" class="list-group-item list-group-item-action">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{ game.game_result|title }}</h5>
-                        <small>{{ game.date_time|date:"Y-m-d H:i" }}</small>
-                    </div>
-                    
-                </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ game.game_result|title }}</h5>
+                    <small>{{ game.date_time|date:"Y-m-d H:i" }}</small>
+                </div>
+            </a>
             {% empty %}
-                <p>No games played yet for this type.</p>
+            <p>No games played yet for this type.</p>
             {% endfor %}
+        </div>
+        <!-- Container for the pie chart -->
+        <div class="chart-container">
+            <canvas id="chart-{{ forloop.counter }}"></canvas>
         </div>
     </div>
 {% endfor %}
-
 {% endblock content %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/stats_charts.js' %}"></script>
+<script type="application/json" id="charts-data">{{ chart_data|safe }}</script>
+{% endblock %}
 

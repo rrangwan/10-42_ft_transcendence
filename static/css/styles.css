@@ -52,3 +52,42 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+
+/* Styling for the game statistics sections */
+.game-stats-section {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Headings inside the sections */
+.game-stats-section h4 {
+    color: #007BFF;
+}
+
+/* List group styling for games */
+.list-group-item {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+/* Canvas for charts */
+canvas {
+    padding: 10px;
+    max-width: 400px;
+    height: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+/* Ensure responsiveness of canvas */
+@media (max-width: 768px) {
+    canvas {
+        width: 100%;
+        height: auto;
+    }
+}

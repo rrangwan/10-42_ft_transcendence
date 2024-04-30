@@ -8,6 +8,7 @@ from .models import UserProfile, Game, GAME_TYPE_CHOICES
 from django.http import JsonResponse
 from django.utils import timezone
 import pytz
+import json
 
 
 
@@ -117,11 +118,41 @@ def save_game_result(request):
 @never_cache
 def game_stats(request):
     games = Game.objects.filter(user_profile__user=request.user).order_by('-date_time')
-    game_types = dict(GAME_TYPE_CHOICES)  # This maps game type IDs to names
+    game_types = dict(GAME_TYPE_CHOICES)  # Maps game type IDs to names
 
-    # Organize games by type and include the name directly
     games_by_type = {}
+    stats_by_type = {}
     for type_id, type_name in game_types.items():
-        games_by_type[type_name] = [game for game in games if game.game_type == type_id]
+        filtered_games = games.filter(game_type=type_id)
+        games_by_type[type_name] = filtered_games
+        # Adjust string comparisons to match case
+        wins = filtered_games.filter(game_result='Win').count()
+        losses = filtered_games.filter(game_result='Lose').count()
+        draws = filtered_games.filter(game_result='Draw').count()
+        stats_by_type[type_name] = {'wins': wins, 'losses': losses, 'draws': draws}
 
-    return render(request, 'stats.html', {'games_by_type': games_by_type})
+    # Prepare the chart data for the JavaScript to create the charts
+    chart_data = json.dumps([
+        {'typeName': type_name, 'wins': stats['wins'], 'losses': stats['losses'], 'draws': stats['draws']}
+        for type_name, stats in stats_by_type.items()
+    ])
+
+    return render(request, 'stats.html', {'games_by_type': games_by_type, 'chart_data': chart_data})
+    
+@login_required
+@never_cache
+def pong_AI(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,  
+    }
+    return render(request, 'pong_AI.html', context)
+
+@login_required
+@never_cache
+def pong_AI2(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,  
+    }
+    return render(request, 'pong_AI2.html', context)
