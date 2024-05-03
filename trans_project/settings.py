@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'webapp.middleware.LanguageMiddleware',
 ]
 
 ROOT_URLCONF = 'trans_project.urls'
@@ -70,13 +71,13 @@ WSGI_APPLICATION = 'trans_project.wsgi.application'
 
 
 env = environ.Env()
-environ.Env.read_env()
-
+#environ.Env.read_env()
+environ.Env.read_env(env_file='../.env') 
 
 
 DATABASES = {
     'default': env.db()
-}
+ }
 
 # DATABASES = {
 #     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
@@ -132,3 +133,7 @@ SSL_PRIVATE_KEY_PATH = os.getenv('SSL_PRIVATE_KEY_PATH', '/code/key.pem')
 LOGIN_REDIRECT_URL = 'index' 
 
 LOGIN_URL = '/login/'
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]

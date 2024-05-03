@@ -5,12 +5,23 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from .forms import UserProfileForm, CustomUserCreationForm
 from .models import UserProfile, Game, GAME_TYPE_CHOICES
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.utils import timezone
 import pytz
 import json
+from django.utils.translation import activate
 
 
+
+@login_required
+def set_language(request, language):
+    response = HttpResponseRedirect(request.META.get('HTTP_REFERER', '/')) #returns to same page
+    if request.user.is_authenticated:
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_profile.language = language
+        user_profile.save()
+        activate(language)  # Activate the selected language
+    return response
 
 # Home page view, accessible to everyone, no need to prevent caching here
 def index(request):

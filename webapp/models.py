@@ -5,11 +5,19 @@ from django.contrib.auth.models import User
 def default_profile_pic():
     return "profile_pics/default_pic.jpg"
 
+LANGUAGE_CHOICES = (
+    ('en', 'English'),
+    ('ar', 'العربية'),  # Arabic 
+    ('es', 'Español'),  # Spanish
+    ('ru', 'Русский'),  # Russian
+    ('hi', 'हिन्दी'),   # Hindi
+)
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nickname = models.CharField(max_length=9, unique=True)
     profile_pic = models.ImageField(upload_to='profile_pics/', default=default_profile_pic)
-
+    language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, default='en')
 
     def __str__(self):
         return self.nickname
