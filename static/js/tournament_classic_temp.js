@@ -98,22 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // function determineWinner() {
-    //     let maxScore = Math.max(...currentScores);
-    //     let winners = [];
-    //     currentScores.forEach((score, index) => {
-    //         if (score === maxScore) {
-    //             winners.push(playerNames[index]);
-    //         }
-    //     });
-    //     if (winners.length > 1) {
-    //         alert('The game is a draw between: ' + winners.join(', '));
-    //     } else {
-    //         alert('Winner is: ' + winners[0]);
-    //     }
-    // }
-
-
     function determineWinner() {
         let maxScore = Math.max(...currentScores);
         let winners = [];

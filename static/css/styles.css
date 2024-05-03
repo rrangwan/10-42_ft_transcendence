@@ -7,6 +7,12 @@
 
 .skip-link:focus {
     text-decoration: underline; /* Underline to indicate focus */
+    color: #007BFF;
+}
+
+button:focus {
+    text-decoration: underline; /* Underline to indicate focus */
+    color: #007BFF;
 }
 
 .paddle {
@@ -101,3 +107,51 @@ canvas {
         height: auto;
     }
 }
+
+
+/* tic-tac-toe */
+
+#game-board2 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);  
+    gap: 5px;
+    max-width: 400px;  /* Adjust as necessary for your design */
+}
+
+
+.game-board {
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    gap: 10px;
+    max-width: 300px;
+    margin: auto;
+}
+
+.cell {
+    width: 90px;
+    height: 90px;
+    background-color: #f4f4f4;
+    border: none;
+    font-size: 2em;
+    color: #333;
+    cursor: pointer;
+}
+
+.cell:hover {
+    background-color: #e2e2e2;
+}
+
+.board-row {
+    display: contents;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+}
+
+#game-status {
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+

@@ -85,6 +85,25 @@ def pong_tour2(request):
     }
     return render(request, 'pong_tour2.html', context)
 
+@login_required
+@never_cache
+def pong_AI(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,  
+    }
+    return render(request, 'pong_AI.html', context)
+
+@login_required
+@never_cache
+def pong_AI2(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,  
+    }
+    return render(request, 'pong_AI2.html', context)
+
+
 # User profile page, requires login and should not be cached
 @login_required
 @never_cache
@@ -150,20 +169,58 @@ def game_stats(request):
 
     return render(request, 'stats.html', {'games_by_type': games_by_type, 'chart_data': chart_data})
     
-@login_required
-@never_cache
-def pong_AI(request):
-    user_profile = UserProfile.objects.get(user=request.user)
-    context = {
-        'nickname': user_profile.nickname,  
-    }
-    return render(request, 'pong_AI.html', context)
 
 @login_required
 @never_cache
-def pong_AI2(request):
+def tic_game(request):
     user_profile = UserProfile.objects.get(user=request.user)
     context = {
         'nickname': user_profile.nickname,  
     }
-    return render(request, 'pong_AI2.html', context)
+    return render(request, 'tic_game.html', context)
+
+@login_required
+@never_cache
+def tic_game2(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,  
+    }
+    return render(request, 'tic_game2.html', context)
+
+@login_required
+@never_cache
+def tic_tour(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,
+    }
+    return render(request, 'tic_tour.html', context)
+
+
+@login_required
+@never_cache
+def tic_tour2(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,
+    }
+    return render(request, 'tic_tour2.html', context)
+
+@login_required
+@never_cache
+def tic_AI(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,  
+    }
+    return render(request, 'tic_AI.html', context)
+
+@login_required
+@never_cache
+def tic_AI2(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'nickname': user_profile.nickname,  
+    }
+    return render(request, 'tic_AI2.html', context)

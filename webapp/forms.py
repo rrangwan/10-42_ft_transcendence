@@ -3,6 +3,7 @@ from .models import UserProfile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -23,17 +24,22 @@ class UserProfileForm(forms.ModelForm):
             raise forms.ValidationError("Nickname already exists. Please choose a different one.")
         return nickname
 
+
 class CustomUserCreationForm(UserCreationForm):
+    username_validator = RegexValidator(
+        regex='^[a-zA-Z0-9]{2,9}$',
+        message="Enter a username between 2-9 characters. Only letters and numbers allowed."
+    )
     username = forms.CharField(
-        label="Username", 
-        help_text="Enter a username between 2-9 characters. Only letters and numbers allowed.",
+        label="Username",
         max_length=9,
+        validators=[username_validator],
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     nickname = forms.CharField(
-        label="Nickname", 
-        required=True, 
-        max_length=9, 
+        label="Nickname",
+        required=False,
+        max_length=9,
         help_text='Enter a nickname, it will default to your username if left blank.',
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
@@ -46,7 +52,7 @@ class CustomUserCreationForm(UserCreationForm):
         label="Confirm Password",
         help_text="Enter the same password as before, for verification.",
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
-    )    
+    )
     
 
     class Meta:

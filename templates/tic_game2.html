@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<script type="text/javascript">
+    var playerName = "{{ nickname }}";
+</script>
+<main class="container mt-4">
+    <div id="game-board2" class="game-board">
+        {% for row in "0123" %}
+        <div class="board-row">
+            {% for col in "0123" %}
+            <button class="cell" id="cell-{{ forloop.parentloop.counter0 }}{{ forloop.counter0 }}"></button>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <p id="game-status">Press Start to play!</p>
+    <button id="start-button">Start Game</button>
+    <div id="countdown"></div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/classic_tic2.js' %}"></script>
+{% endblock %}
