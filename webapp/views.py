@@ -10,6 +10,7 @@ from django.utils import timezone
 import pytz
 import json
 from django.utils.translation import activate
+from django.utils.translation import gettext as _
 
 
 

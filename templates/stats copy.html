@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
-
+{% load i18n %}
 {% block title %}
-    Game Statistics
+    {% trans "Game Statistics" %}
 {% endblock title %}
 
 {% block content %}
 {% load static %}
-<h2>Game Statistics</h2>
+<h2>{% trans "Game Statistics" %}</h2>
 {% for type_name, games_list in games_by_type.items %}
     <div class="mt-4">
-        <h4>{{ type_name }} Games</h4>
+        <h4>{{ type_name }} {% trans "Games" %}</h4>
         <div class="list-group">
             {% for game in games_list %}
                 <a href="#" class="list-group-item list-group-item-action">
@@ -20,7 +20,7 @@
                     
                 </a>
             {% empty %}
-                <p>No games played yet for this type.</p>
+                <p>{% trans "No games played yet for this type." %}</p>
             {% endfor %}
         </div>
     </div>
