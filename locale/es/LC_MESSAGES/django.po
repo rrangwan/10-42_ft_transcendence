@@ -32,7 +32,7 @@ msgstr "Juega los juegos"
 
 #: templates/base.html:37
 msgid "View Stats"
-msgstr "Ve las estadísticas"
+msgstr "Ve las estadisticas"
 
 #: templates/base.html:40 templates/profile.html:4
 msgid "User Profile"
@@ -41,7 +41,7 @@ msgstr "perfil de usuario"
 #: templates/base.html:46 templates/logout.html:3 templates/logout.html:7
 #: templates/logout.html:11
 msgid "Logout"
-msgstr "cerrar sesión"
+msgstr "cerrar sesion"
 
 #: templates/games.html:6
 msgid "Choose a game:"
@@ -73,27 +73,27 @@ msgstr "Tenis de 2 Pelotas con IA"
 
 #: templates/games.html:65
 msgid "tic-tac-toe Classic"
-msgstr "tres en línea clasico"
+msgstr "tres en linea clasico"
 
 #: templates/games.html:73
 msgid "tic-tac-toe Classic Tournament"
-msgstr "torneo clasico de tres en línea"
+msgstr "torneo clasico de tres en linea"
 
 #: templates/games.html:81
 msgid "tic-tac-toe Classic AI"
-msgstr "tres en línea clasico con IA"
+msgstr "tres en linea clasico con IA"
 
 #: templates/games.html:91
 msgid "tic-tac-toe Modified"
-msgstr "tres en línea modificado"
+msgstr "tres en linea modificado"
 
 #: templates/games.html:99
 msgid "tic-tac-toe Modified Tournament"
-msgstr "torneo modificado de tres en línea"
+msgstr "torneo modificado de tres en linea"
 
 #: templates/games.html:107
 msgid "tic-tac-toe Modified AI"
-msgstr "tres en línea modificado con IA"
+msgstr "tres en linea modificado con IA"
 
 #: templates/index.html:6
 msgid "Welcome back, "
@@ -113,7 +113,7 @@ msgstr "Por favor"
 
 #: templates/index.html:11
 msgid "log in"
-msgstr "Iniciar sesión"
+msgstr "Iniciar sesion"
 
 #: templates/index.html:11
 msgid "register"
@@ -125,7 +125,7 @@ msgstr "Explorar los juegos"
 
 #: templates/login.html:3 templates/login.html:7 templates/login.html:11
 msgid "Login"
-msgstr "Inicia la sesión"
+msgstr "Inicia la sesion"
 
 #: templates/login.html:12 templates/register.html:4 templates/register.html:11
 #: templates/register.html:16
@@ -134,7 +134,7 @@ msgstr "Registrate"
 
 #: templates/logout.html:8
 msgid "Are you sure you want to logout?"
-msgstr "Estás seguro que quieres cerrar tu sesión"
+msgstr "Estas seguro que quieres cerrar tu sesion"
 
 #: templates/logout.html:12
 msgid "Cancel"
@@ -213,17 +213,17 @@ msgstr "Actualiza"
 
 #: templates/register.html:20
 msgid "Already have an account?"
-msgstr "Tienes una cuenta ya!"
+msgstr "Tienes una cuenta ya"
 
 #: templates/register.html:20
 msgid "Login here"
-msgstr "Inicia tu sesión aquí"
+msgstr "Inicia tu sesion aqui"
 
 #: templates/stats copy.html:4 copy.html:9 templates/stats.html:4
 #: templates/stats.html:9 templates/stats_old.html:5
 #: templates/stats_old.html:10
 msgid "Game Statistics"
-msgstr "Estadísticas del juego"
+msgstr "Estadisticas del juego"
 
 #: templates/stats copy.html:12 templates/stats.html:12
 #: templates/stats_old.html:13
@@ -233,7 +233,7 @@ msgstr "Juegos"
 #: templates/stats copy.html:23 templates/stats.html:22
 #: templates/stats_old.html:24
 msgid "No games played yet for this type."
-msgstr "No hay ningún juegos de este tipo."
+msgstr "No hay ningun juegos de este tipo."
 
 #: templates/tic_game.html:19 templates/tic_game2.html:19
 msgid "Press Start to play!"

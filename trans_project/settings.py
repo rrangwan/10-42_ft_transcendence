@@ -76,8 +76,15 @@ environ.Env.read_env(env_file='../.env')
 
 
 DATABASES = {
-    'default': env.db()
- }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'trans_db'),
+        'USER': os.getenv('POSTGRES_USER', 'rrangwan'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'raj123'),
+        'HOST': 'db',
+        'PORT': '5432',
+    }
+}
 
 # DATABASES = {
 #     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))

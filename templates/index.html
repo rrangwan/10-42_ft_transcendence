@@ -6,7 +6,7 @@
     {% if is_authenticated %}
     <h1>{% trans "Welcome back, " %}{{ request.user.userprofile.nickname }}!</h1>
     <p>{% trans "Enjoy your stay at our Game Portal." %}</p>
-    <a href="{% url 'games' %}" class="btn btn-primary">{% trans "Play Games</a>
+    <a href="{% url 'games' %}" class="btn btn-primary">{% trans "Play Games" %}</a>
     {% else %}
     <h1>{% trans "Welcome to our Game Portal!" %}</h1>
     <p>{% trans "Please " %}<a href="{% url 'login' %}">{% trans "log in" %}</a> or <a href="{% url 'register' %}">{% trans "register" %}</a> {% trans "to explore the games." %}</p>

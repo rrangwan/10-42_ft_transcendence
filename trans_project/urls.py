@@ -27,5 +27,5 @@ urlpatterns = [
     path('tic4/', tic_tour2, name='tic_tour2'),
     path('tic5/', tic_AI, name='tic_AI'),
     path('tic6/', tic_AI2, name='tic_AI2'),
-    path('set-language/<str:lang_code>/', set_language, name='set_language'),
+    path('set-language/<str:language>/', set_language, name='set_language'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

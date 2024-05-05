@@ -24,5 +24,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function changeLanguage() {
     var language = document.getElementById('language-select').value;
-    window.location.href = `/set-language/${language}/`; 
+
+    console.log('Selected language:', language);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `/set-language/${language}/`, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            console.log('AJAX request state:', xhr.readyState);
+            console.log('AJAX request status:', xhr.status);
+            if (xhr.status == 200) {
+                console.log('Language set successfully');
+                window.location.reload(); // Reload the page to reflect the language change
+            } else {
+                console.error('Error setting language:', xhr.status);
+            }
+        }
+    };
+    xhr.send();
 }
