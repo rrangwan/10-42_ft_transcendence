@@ -1,302 +1,230 @@
-
 document.addEventListener('DOMContentLoaded', function () {
-    // Elements for alias submission and game control
+    // Element references for alias submission and game control
     const player2AliasInput = document.getElementById('player2-alias');
     const player3AliasInput = document.getElementById('player3-alias');
     const submitAliasesButton = document.getElementById('submit-aliases');
     const startButton = document.getElementById('start-button');
-    const aliasInputs = document.getElementById('alias-inputs');
+    const gameStatus = document.getElementById('game-status');
+    const cells = document.querySelectorAll('.cell');
 
-    // Element references for updating the player names and scores
-    const currentNamePlayer1 = document.getElementById('current-name-player1');
-    const currentScorePlayer1 = document.getElementById('current-score-player1');
-    const currentNamePlayer2 = document.getElementById('current-name-player2');
-    const currentScorePlayer2 = document.getElementById('current-score-player2');
-    const currentNamePlayer3 = document.getElementById('current-name-player3');
-    const currentScorePlayer3 = document.getElementById('current-score-player3');
-
-
-    // Initialize with Player 1's nickname from the server
-    let playerNames = [currentNamePlayer1.textContent, '', ''];
-    const currentScores = [0, 0, 0];
+    let playerNames = [document.getElementById('current-name-player1').textContent, '', ''];
+    let playerScores = [0, 0, 0];
+    let board = [['', '', ''], ['', '', ''], ['', '', '']];
+    let player = 'X';
+    let gameActive = false;
     let gameSequence = 0;
-    let movementInterval;
-
-    // Setup the Pong game elements
-    const gameArea = document.getElementById('pong-game');
-    const paddle1 = createPaddle('paddle1');
-    const paddle2 = createPaddle('paddle2');
-    const ball = createBall('ball');
-    gameArea.appendChild(paddle1);
-    gameArea.appendChild(paddle2);
-    gameArea.appendChild(ball);
-
-    submitAliasesButton.addEventListener('click', function() {
-        const aliases = [player2AliasInput.value.trim(), player3AliasInput.value.trim()];
-        if (validateAliases(aliases)) {
-            playerNames[1] = aliases[0];
-            playerNames[2] = aliases[1];
-            currentNamePlayer2.textContent = aliases[0];
-            currentNamePlayer3.textContent = aliases[1];
-
-            // Hide alias inputs and show start button
-            aliasInputs.style.display = 'none';
-            startButton.style.display = 'block';
-        } else {
-            alert("Please ensure aliases are unique, 2-9 characters, no spaces, and alphanumeric.");
-        }
-    });
-
-    startButton.addEventListener('click', function() {
-        startGameSequence();
-    });
 
     function validateAliases(aliases) {
         const uniqueAliases = new Set(aliases);
         return uniqueAliases.size === aliases.length && aliases.every(alias => /^[a-zA-Z0-9]{2,9}$/.test(alias));
     }
 
-    function startGameSequence() {
+    submitAliasesButton.addEventListener('click', function () {
+        const aliases = [player2AliasInput.value.trim(), player3AliasInput.value.trim()];
+        if (validateAliases(aliases)) {
+            playerNames[1] = aliases[0];
+            playerNames[2] = aliases[1];
+            document.getElementById('current-name-player2').textContent = aliases[0];
+            document.getElementById('current-name-player3').textContent = aliases[1];
+            startButton.style.display = 'block';
+            submitAliasesButton.style.display = 'none';
+        } else {
+            alert("Please ensure aliases are unique, 2-9 characters, no spaces, and alphanumeric.");
+        }
+    });
+
+    startButton.addEventListener('click', function() {
+        gameActive = true;
+        clearBoard();
         startButton.style.display = 'none';
-        resetPaddles();  // Reset paddles to standard positions before starting countdown
-        switch (gameSequence) {
-            case 0:
-                performCountdown(`${playerNames[0]} vs ${playerNames[1]}`, 0, 1);
-                break;
-            case 1:
-                performCountdown(`${playerNames[0]} vs ${playerNames[2]}`, 0, 2);
-                break;
-            case 2:
-                performCountdown(`${playerNames[1]} vs ${playerNames[2]}`, 1, 2);
-                break;
-        }
-        gameSequence++;
-    }
-    
-    function resetPaddles() {
-        const centerY = `${gameArea.clientHeight / 2 - paddle1.offsetHeight / 2}px`;
-        paddle1.style.top = centerY;
-        paddle2.style.top = centerY;
-    }
+        // updateGameStatus2("Tournament started! First match: " + playerNames[0] + " vs " + playerNames[1]);
+        setupGame();
+    });
 
-    function performCountdown(matchTitle, player1Index, player2Index) {
-        let countdown = 3;
-        let countdownElement = document.getElementById('countdown');
-        countdownElement.textContent = countdown + ' seconds until ' + matchTitle;
-        let interval = setInterval(function() {
-            countdown--;
-            countdownElement.textContent = countdown ? countdown + ' seconds until ' + matchTitle : 'Go!';
-            if (!countdown) {
-                clearInterval(interval);
-                countdownElement.textContent = '';
-                startPongGame(player1Index, player2Index);
-            }
-        }, 1000);
-    }
-
-    function startPongGame(player1Index, player2Index) {
-        resetBall(); // Position the ball in the middle
-        let timeLeft = 30; // 
-    
-        let timerElement = document.getElementById('game-timer');
-        timerElement.textContent = 'Time Left: ' + formatTime(timeLeft); // Update UI
-    
-        let interval = setInterval(function() {
-            timeLeft--;
-            timerElement.textContent = 'Time Left: ' + formatTime(timeLeft);
-    
-            if (timeLeft <= 0) {
-                clearInterval(interval);
-                stopPongGame(); // Stops the pong game ball movement and key listeners
-                concludeRound(player1Index, player2Index);
-            }
-        }, 1000);
-    
-        // Add keydown listener specifically for this round
-        function handleKeypress(event) {
-            movePaddle(event, player1Index, player2Index);
-        }
-
-        document.addEventListener('keydown', handleKeypress);
-
-        moveBall(); // Start moving the ball
-
-        function stopPongGame() {
-            clearInterval(movementInterval); // Assume movementInterval is your global var for moveBall interval
-            document.removeEventListener('keydown', handleKeypress); // Remove key listener when round ends
-        }
-}
-    
-    function formatTime(seconds) {
-        let mins = Math.floor(seconds / 60);
-        let secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-    
-    function concludeRound(player1Index, player2Index) {
-        alert(`Round over between ${playerNames[player1Index]} and ${playerNames[player2Index]}`);
-        if (gameSequence < 3) {
-            startGameSequence(); // Setup the next round or end the game
-        } else {
-            determineWinner();
-        }
-    }
-    
-
-    function createPaddle(id) {
-        const paddle = document.createElement('div');
-        paddle.id = id;
-        paddle.classList.add('paddle');
-        return paddle;
-    }
-
-    function createBall(id) {
-        const ball = document.createElement('div');
-        ball.id = id;
-        ball.classList.add('ball');
-        ball.style.position = 'absolute';
-        return ball;
-    }
-
-    function movePaddle(event, player1Index, player2Index) {
-        const paddleSpeed = 10;
-        const topBoundary = 40;
-        const bottomBoundary = gameArea.clientHeight - paddle1.offsetHeight + 15;
-        if (player1Index === 0 || player1Index === 1) {
-            if (event.key === 'w') {
-                paddle1.style.top = `${Math.max(paddle1.offsetTop - paddleSpeed, topBoundary)}px`;
-            } else if (event.key === 's') {
-                paddle1.style.top = `${Math.min(paddle1.offsetTop + paddleSpeed, bottomBoundary)}px`;
-            }
-        }
-        if (player2Index === 1 || player2Index === 2) {
-            if (event.key === 'ArrowUp') {
-                paddle2.style.top = `${Math.max(paddle2.offsetTop - paddleSpeed, topBoundary)}px`;
-            } else if (event.key === 'ArrowDown') {
-                paddle2.style.top = `${Math.min(paddle2.offsetTop + paddleSpeed, bottomBoundary)}px`;
-            }
-        }
-    }
-
-    function moveBall() {
-        let ballSpeedX = 2;
-        let ballSpeedY = 2;
-        movementInterval = setInterval(function() {
-            let nextX = ball.offsetLeft + ballSpeedX;
-            let nextY = ball.offsetTop + ballSpeedY;
-
-            // Collision with top or bottom boundaries
-            if (nextY <= 0 || nextY >= gameArea.clientHeight - ball.offsetHeight) {
-                ballSpeedY *= -1;
-            }
-
-            // Handle player-ball collisions
-            if (nextX - ball.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
-                if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball.offsetHeight >= paddle1.offsetTop) {
-                    nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball.offsetWidth;
-                    ballSpeedX = -ballSpeedX; // Reverse the horizontal direction
-                    ballSpeedY *= -1; // Reverse the vertical direction
-                }
-            }
-
-            // Collision with right paddle
-            if (nextX + ball.offsetWidth >= paddle2.offsetLeft && nextY + ball.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle2.offsetLeft - ball.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-            // Collision with left paddle
-            if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth && nextY + ball.offsetHeight > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle1.offsetLeft + paddle1.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-            // Collision with left or right boundaries (score update)
-            if (nextX <= 0) {
-                // Ball hits left boundary, score for the player on the right
-                updateScore(rightPlayerIndex(gameSequence));
-                resetBall();
-                return; // Stop further updates within this tick
-            } else if (nextX >= gameArea.clientWidth - ball.offsetWidth) {
-                // Ball hits right boundary, score for the player on the left
-                updateScore(leftPlayerIndex(gameSequence));
-                resetBall();
-                return; // Stop further updates within this tick
-            }
-
-            ball.style.left = `${nextX}px`;
-            ball.style.top = `${nextY}px`;
-        }, 20);
-    }
-
-
-// Add event listener to prevent default scrolling behavior
-document.addEventListener('keydown', function(event) {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-        event.preventDefault();
-    }
-});
-
-
-    function rightPlayerIndex(sequence) {
-        switch (sequence) {
-            case 1: return 1; // Player 2 is on the right in Game Sequence 0
-            case 2: return 2; // Player 3 is on the right in Game Sequence 1
-            case 3: return 2; // Player 3 is also on the right in Game Sequence 2
-        }
-    }
-
-    function leftPlayerIndex(sequence) {
-        switch (sequence) {
-            case 1: return 0; // Player 1 is on the left in Game Sequence 0
-            case 2: return 0; // Player 1 is also on the left in Game Sequence 1
-            case 3: return 1; // Player 2 is on the left in Game Sequence 2
-        }
-    }
-
-        
-    function updateScore(playerIndex) {
-        currentScores[playerIndex]++;
-        if (playerIndex === 0) {
-            currentScorePlayer1.textContent = currentScores[playerIndex].toString();
-        } else if (playerIndex === 1) {
-            currentScorePlayer2.textContent = currentScores[playerIndex].toString();
-        } else if (playerIndex === 2) {
-            currentScorePlayer3.textContent = currentScores[playerIndex].toString();
-        }
-    }
-
-
-    function resetBall() {
-        ball.style.left = `${gameArea.clientWidth / 2 - ball.offsetWidth / 2}px`;
-        ball.style.top = `${gameArea.clientHeight / 2 - ball.offsetHeight / 2}px`;
-    }
-
-    function determineWinner() {
-        let maxScore = Math.max(...currentScores);
-        let winners = [];
-        currentScores.forEach((score, index) => {
-            if (score === maxScore) {
-                winners.push(playerNames[index]);
-            }
+    function clearBoard() {
+        cells.forEach(cell => {
+            cell.textContent = '';
+            cell.disabled = false;
         });
+        board = [['', '', ''], ['', '', ''], ['', '', '']];
+    }
 
-        let result;
-        if (winners.length > 1) {
-            if (winners.includes(playerNames[0])) {
-                alert('The game is a draw between: ' + winners.join(', '));
-                result = 'Draw';
+    function setupGame() {
+        gameActive = true;
+        clearBoard();
+        togglePlayer(true);  // Call with a parameter to set initial player for the round
+        // updateGameStatus();
+        startButton.style.display = 'none';
+    }
+
+
+    function updateGameStatus2(status) {
+        console.log("Updating game status:", status);  // Debugging output to console
+        gameStatus.textContent = status;
+    }
+
+    
+    function updateGameStatus() {
+        let status;
+        if (gameSequence === 0) {  // Round 1: Player1 (X) vs Player2 (O)
+            status = `${playerNames[0]} vs ${playerNames[1]} (${player})'s turn`;
+        } else if (gameSequence === 1) {  // Round 2: Player1 (X) vs Player3 (O)
+            status = `${playerNames[0]} vs ${playerNames[2]} (${player})'s turn`;
+        } else if (gameSequence === 2) {  // Round 3: Player2 (X) vs Player3 (O)
+            status = `${playerNames[1]} vs ${playerNames[2]} (${player})'s turn`;
+        }
+        gameStatus.textContent = status;
+    }
+    
+    function togglePlayer(initial = false) {
+        if (initial) {
+            player = 'X'; // Always start with 'X' at the beginning of a game
+        } else {
+            player = (player === 'X') ? 'O' : 'X';
+        }
+        updateGameStatus();  // Call updateGameStatus to reflect the correct match setup
+    }
+
+
+    cells.forEach(cell => {
+        const row = parseInt(cell.id.charAt(5));
+        const col = parseInt(cell.id.charAt(6));
+        cell.addEventListener('click', function() {
+            handleCellClick(row, col, this);
+        });
+    });
+    
+    
+    function handleCellClick(row, col, cellElement) {
+        if (!gameActive || board[row][col] !== '') return;
+        board[row][col] = player;
+        cellElement.textContent = player;
+    
+        if (checkWinner()) {
+            let winnerIndex = determineWinnerIndex();
+            updateScores(winnerIndex, 2);
+            endGame(`${playerNames[winnerIndex]} wins!`);
+        } else if (checkDraw()) {
+            updateScoresForDraw();
+            endGame('Draw!');
+        } else {
+            togglePlayer();
+        }
+    }
+    
+    function determineWinnerIndex() {
+        if (gameSequence === 0) {
+            return player === 'X' ? 0 : 1;
+        } else if (gameSequence === 1) {
+            return player === 'X' ? 0 : 2;
+        } else if (gameSequence === 2) {
+            return player === 'X' ? 1 : 2;
+        }
+    }
+    
+    function updateScoresForDraw() {
+        if (gameSequence === 0) {
+            updateScores(0, 1);
+            updateScores(1, 1);
+        } else if (gameSequence === 1) {
+            updateScores(0, 1);
+            updateScores(2, 1);
+        } else if (gameSequence === 2) {
+            updateScores(1, 1);
+            updateScores(2, 1);
+        }
+    }
+    
+    
+    function checkDraw() {
+        // Check if all cells are filled and there is no winner before declaring a draw
+        return board.every(row => row.every(cell => cell !== '')) && !checkWinner();
+    }
+    
+    function checkWinner() {
+        const winLines = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],  // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],  // Columns
+            [0, 4, 8], [2, 4, 6]              // Diagonals
+        ];
+        return winLines.some(line => 
+            line.every(index => board[Math.floor(index / 3)][index % 3] === player)
+        );
+    }
+    
+
+    function endGame(message) {
+        updateGameStatus2(message);
+        gameActive = false;
+        cells.forEach(cell => cell.disabled = true);
+    
+        console.log("Game ended, preparing for next match or conclusion.");
+    
+        if (gameSequence < 2) {
+            gameSequence++;
+            startButton.textContent = 'Next Match';
+            startButton.style.display = 'block';
+        } else {
+            setTimeout(() => {
+                determineOverallWinner(); //  setTimeout to ensure any pending updates complete
+            }, 0);
+        }
+    }
+    
+
+    function updateScores(playerIndex, points) {
+        playerScores[playerIndex] += points;
+        document.getElementById(`current-score-player${playerIndex + 1}`).textContent = playerScores[playerIndex].toString();
+        console.log(`Updated scores: ${playerScores.join(', ')}`); // Log score update
+    }
+
+    function determineOverallWinner() {
+        const maxScore = Math.max(...playerScores);
+        const winners = playerScores.flatMap((score, index) => score === maxScore ? [playerNames[index]] : []);
+        const player1Index = 0;  
+        // Determine if all players have the same score
+        if (playerScores.every(score => score === maxScore)) {
+            updateGameStatus2(`Tie between ${winners.join(', ')}`);
+            announceWinner('Draw');  // All players are tied
+        } else if (winners.includes(playerNames[player1Index])) {
+            // Player 1 is among the winners
+            if (winners.length > 1) {
+                // There are multiple winners including Player 1
+                updateGameStatus2(`Tie between ${winners.join(' and ')}`);
+                announceWinner('Draw');
             } else {
-                alert('Player 1 did not win. The winners are: ' + winners.join(', '));
-                result = 'Lose';
+                // Player 1 is the sole winner
+                updateGameStatus2(`${playerNames[player1Index]} wins the tournament!`);
+                announceWinner('Win');
             }
         } else {
-            alert('Winner is: ' + winners[0]);
-            result = (winners[0] === playerNames[0]) ? 'Win' : 'Lose';
+            // Player 1 did not win
+            updateGameStatus2(`${winners[0]} wins the tournament!`);
+            announceWinner('Lose');
         }
-
-        announceWinner(result);
     }
+    
+
+
+    function announceWinner(result) {
+        const csrfToken = getCookie('csrftoken');
+        let game_type = 8;
+    
+        fetch('/save_game_result/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: `result=${result}&game_type=${game_type}`
+        }).then(response => response.json())
+          .then(data => console.log(data.message))
+          .catch(error => console.error('Error posting game results:', error));
+    }
+
+
+    
+    
 
     function getCookie(name) {
         let cookieValue = null;
@@ -312,23 +240,4 @@ document.addEventListener('keydown', function(event) {
         }
         return cookieValue;
     }
-
-    function announceWinner(result) {
-        const csrfToken = getCookie('csrftoken');
-        let game_type = 2; // Assuming '2' is your designated game type for this tournament
-
-        fetch('/save_game_result/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken
-            },
-            body: `result=${result}&game_type=${game_type}`
-        }).then(response => response.json())
-          .then(data => console.log(data.message))
-          .catch(error => console.error('Error posting game results:', error));
-    }
 });
-
-
-
