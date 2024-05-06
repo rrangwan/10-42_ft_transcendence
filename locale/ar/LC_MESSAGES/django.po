@@ -239,3 +239,11 @@ msgstr "لم تم لعبها بعد"
 #: templates/tic_game.html:19 templates/tic_game2.html:19
 msgid "Press Start to play!"
 msgstr "أضعط أبدأ للعب"
+
+#: templates/base.html:53 templates/base.html:54
+msgid "Font"
+msgstr "حجم الخط"
+
+#: templates/base.html:55
+msgid "Reset Font Size"
+msgstr "حجم الخط التلقائي"

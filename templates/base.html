@@ -50,17 +50,15 @@
                     </ul>
                         <!-- Font size controls -->
                     <div>
-                        <button id="increase-font" class="btn btn-secondary btn-sm">Font +</button>
-                        <button id="decrease-font" class="btn btn-secondary btn-sm">Font -</button>
-                        <button id="reset-font" class="btn btn-secondary btn-sm">Reset Font Size</button>
+                        <button id="increase-font" class="btn btn-secondary btn-sm">{% trans "Font" %} +</button>
+                        <button id="decrease-font" class="btn btn-secondary btn-sm">{% trans "Font" %}  -</button>
+                        <button id="reset-font" class="btn btn-secondary btn-sm">{% trans "Reset Font Size" %}</button>
                     </div>
                     <div>
                         <select id="language-select" onchange="changeLanguage()">
                             <option value="en">English</option>
                             <option value="ar">العربية</option>
                             <option value="es">Español</option>
-                            <option value="ru">Русский</option>
-                            <option value="hi">हिन्दी</option>
                         </select>
                     </div>
                 </div>
