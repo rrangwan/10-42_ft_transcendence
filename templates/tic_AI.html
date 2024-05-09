@@ -4,37 +4,23 @@
 
 {% block content %}
 <script type="text/javascript">
-    // Initialize the playerName with the Django nickname to use in the JavaScript
     var playerName = "{{ nickname }}";
 </script>
 <main class="container mt-4">
-    <!-- Scoreboard and Timer in the upper row -->
-    <div class="row justify-content-center text-center">
-        <div class="col-md-4">
-            <h3 id="player1-score">{{ nickname }}: 0</h3>  <!-- Using Django variable for initial score display -->
+
+    <div id="tic-tac-toe-board" class="game-board">
+        {% for row in "012" %}
+        <div class="board-row">
+            {% for col in "012" %}
+            <button class="cell" id="cell-{{ forloop.parentloop.counter0 }}{{ forloop.counter0 }}"></button>
+            {% endfor %}
+
         </div>
-        <div class="col-md-4">
-            <h3 id="game-timer">{% trans "Time Left:" %} 0:20</h3> <!-- Timer display -->
-        </div>
-        <div class="col-md-4">
-            <h3 id="player2-score">{% trans "AI:" %} 0</h3>  <!-- Static "Player 2" as before -->
-        </div>
+        {% endfor %}
     </div>
-    <!-- Start button in a separate row for better control -->
-    <div class="row justify-content-center my-3">
-        <div class="col-12 text-center">
-            <button id="start-button" class="btn btn-primary">{% trans "Start Game" %}</button>
-        </div>
-        <div class="col-md-4 text-center">
-            <span id="countdown"></span>  <!-- Countdown display area -->
-        </div>
-    </div>
-    <!-- Game area in the row below -->
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <div id="pong-game" class="game-container"></div>
-        </div>
-    </div>
+    <p id="game-status">Press Start to play!</p>
+    <button id="start-button">Start Game</button>
+    <div id="countdown"></div>
 </main>
 {% endblock %}
 

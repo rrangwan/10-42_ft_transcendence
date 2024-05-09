@@ -1,118 +1,242 @@
-
-
 document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOM fully loaded and parsed");
 
-    const currentScorePlayer1 = document.getElementById('player1-score');
-    const currentScorePlayer2 = document.getElementById('player2-score');
-    const countdownDisplay = document.getElementById('countdown');
-    const gameTimerDisplay = document.getElementById('game-timer');
+    const cells = document.querySelectorAll('.cell');
+    const gameStatus = document.getElementById('game-status');
     const startButton = document.getElementById('start-button');
-    
-    
+    const countdownDisplay = document.getElementById('countdown');
 
-    // Initialize
-    let movementInterval;
-    let movementInterval2;
-    let botMovementInterval;
+    let player = 'X';
+    let board = [['', '', ''], ['', '', ''], ['', '', '']];
+    let gameActive = false;
 
-    // Setup the Pong game elements
-    const gameArea = document.getElementById('pong-game');
-    const paddle1 = createPaddle('paddle1');
-    const paddle2 = createPaddle('paddle2');
-    const ball = createBall('ball');
-    const ball2 = createBall('ball2'); // Create the second ball
-    gameArea.appendChild(paddle1);
-    gameArea.appendChild(paddle2);
-    gameArea.appendChild(ball);
-    gameArea.appendChild(ball2);
+    startButton.addEventListener('click', startButtonClick);
 
-
-    startButton.addEventListener('click', function() {
-        startGameSequence();
-    });
-
-    function startGameSequence() {
-        startButton.style.display = 'none';
-        resetPaddles();  // Reset paddles to standard positions before starting countdown
+    function startButtonClick() {
+        startButton.style.display = 'none'; // Hide the start button
+        gameStatus.style.display = ' ';
         performCountdown();
-    }
-    
-    function resetPaddles() {
-        const centerY = `${gameArea.clientHeight / 2 - paddle1.offsetHeight / 2}px`;
-        paddle1.style.top = centerY;
-        paddle2.style.top = centerY;
     }
 
     function performCountdown() {
         let countdown = 3;
         countdownDisplay.textContent = countdown;
-        const countdownInterval = setInterval(function() {
-            countdownDisplay.textContent = --countdown || 'Go!';
+        const countdownInterval = setInterval(() => {
+            countdown -= 1;
+            countdownDisplay.textContent = countdown > 0 ? countdown : 'Go!';
             if (countdown === 0) {
                 clearInterval(countdownInterval);
-                countdownDisplay.textContent = '';
-                startPongGame();
+                setTimeout(() => {
+                    countdownDisplay.textContent = '';
+                    startGame();
+                }, 1000);
             }
         }, 1000);
     }
 
-
-    function startPongGame(player1Index, player2Index) {
-        console.log("Game starting...");
-        resetBall(); // Position the ball in the middle
-        resetBall2();
-        moveBall(); // Start moving the ball
-        moveBall2();
-        startBotMovement();
-        startGameTimer();
-
-
+    function startGame() {
+        gameActive = true;
+        board = Array(4).fill(null).map(() => Array(4).fill(''));
+        cells.forEach(cell => {
+            cell.textContent = '';
+            cell.disabled = false;
+        });
+        attachEventListeners();
+        gameStatus.textContent = updateStatus();
+    }
+    
+    
+    function attachEventListeners() {
+        cells.forEach(cell => {
+            cell.removeEventListener('click', handleCellClick); // Remove previous listener to avoid duplicates
+            cell.addEventListener('click', handleCellClick);    // Add new listener
+        });
+    }
+    
+    function updateStatus() {
+        return `${player === 'X' ? playerName : 'Player 2'}'s turn (${player})`;
     }
 
-    function startGameTimer() {
-        let timeLeft = 20; // can change
-        gameTimerDisplay.textContent = `Time Left: ${formatTime(timeLeft)}`;
-        const timer = setInterval(() => {
-            timeLeft--;
-            gameTimerDisplay.textContent = `Time Left: ${formatTime(timeLeft)}`;
-            if (timeLeft === 0) {
-                clearInterval(timer);
-                // clearInterval(botMovementInterval);
-                endGame();
+    function handleCellClick() {
+        if (!gameActive || this.textContent !== '') return;
+
+        const row = parseInt(this.id.charAt(5));
+        const col = parseInt(this.id.charAt(6));
+
+        if (player === 'X') {  // Human Player
+            makeMove(this, row, col, player);
+            if (checkGameOver()) return;
+
+            // Switch to bot move if the game is not over
+            player = 'O';
+            setTimeout(botMove, 300);  // Simple delay to simulate bot thinking time
+        }
+    }
+
+    function botMove() {
+        // First try to win by completing three in a row
+        if (!tryToWin()) {
+            // If no winning move, then try to block the human player
+            if (!tryToBlock()) {
+                // Make the default move if no blocking or winning is necessary
+                makeDefaultMove();
             }
-        }, 1000);
+        }
+        if (!checkGameOver()) {
+            // Switch back to human player
+            player = 'X';
+            gameStatus.textContent = updateStatus();
+        }
+    }
+    
+    function tryToWin() {
+        // Check each row, column, and diagonal for three 'O's and an empty spot
+        for (let i = 0; i < 4; i++) {
+            if (findThreeInRow('O', i)) return true;
+        }
+        return false;
+    }
+    
+    function findThreeInRow(symbol, index) {
+        // This needs to be expanded to look for three in a row with an empty space in rows, columns, and diagonals
+        return findThree(board[index], symbol) || 
+               findThree([board[0][index], board[1][index], board[2][index], board[3][index]], symbol);
+    }
+    
+    function findThree(line, symbol) {
+        // Example simple logic for finding three of the same symbols with an empty space
+        for (let i = 0; i < line.length - 2; i++) {
+            if (line.slice(i, i + 3).filter(x => x === symbol).length === 3 && line.includes('')) {
+                const emptyIndex = line.indexOf('');
+                if (emptyIndex !== -1) {
+                    const cell = document.getElementById(`cell-${index}${emptyIndex}`);
+                    makeMove(cell, index, emptyIndex, 'O');
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    
+    function tryToBlock() {
+        // Check rows for potential blocks
+        for (let row = 0; row < 3; row++) {
+            if (canBlock(row, 0, row, 1, row, 2)) return true;
+        }
+        // Check columns for potential blocks
+        for (let col = 0; col < 3; col++) {
+            if (canBlock(0, col, 1, col, 2, col)) return true;
+        }
+        // Check diagonals for potential blocks
+        if (canBlock(0, 0, 1, 1, 2, 2)) return true;
+        if (canBlock(0, 2, 1, 1, 2, 0)) return true;
+    
+        return false;
+    }
+    
+    function canBlock(row1, col1, row2, col2, row3, col3) {
+        // This function checks if two cells have 'X' and one is empty, then blocks it with 'O'
+        let cells = [[row1, col1], [row2, col2], [row3, col3]];
+        let countX = 0;
+        let emptyCell = null;
+    
+        cells.forEach(cell => {
+            if (board[cell[0]][cell[1]] === 'X') {
+                countX++;
+            } else if (board[cell[0]][cell[1]] === '') {
+                emptyCell = cell;
+            }
+        });
+    
+        if (countX === 2 && emptyCell) {
+            const [emptyRow, emptyCol] = emptyCell;
+            const cell = document.getElementById(`cell-${emptyRow}${emptyCol}`);
+            makeMove(cell, emptyRow, emptyCol, player);
+            return true;
+        }
+    
+        return false;
+    }
+    
+    function makeDefaultMove() {
+        // Make the first available move if no blocking is required
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (board[row][col] === '') {
+                    const cell = document.getElementById(`cell-${row}${col}`);
+                    makeMove(cell, row, col, player);
+                    return;
+                }
+            }
+        }
+    }
+    
+
+    function makeMove(cell, row, col, currentPlayer) {
+        board[row][col] = currentPlayer;
+        cell.textContent = currentPlayer;
+        if (checkGameOver()) return;
+        gameStatus.textContent = updateStatus();
+    }
+
+    function updateStatus() {
+        return `${player === 'X' ? playerName : 'Player 2'}'s turn (${player})`;
+    }
+
+    function checkGameOver() {
+        if (checkWinner()) {
+            gameStatus.textContent = `${player === 'X' ? playerName : 'Player 2'} Wins!`;
+            announceWinner(player === 'X' ? 'Win' : 'Lose');
+            endGame();
+            return true;
+        } else if (checkDraw()) {
+            gameStatus.textContent = 'Draw!';
+            announceWinner('Draw');
+            endGame();
+            return true;
+        }
+        return false;
     }
 
     function endGame() {
-        clearInterval(botMovementInterval);
-        clearInterval(movementInterval);
-        clearInterval(movementInterval2);
-        paddle1.style.display = 'none';
-        paddle2.style.display = 'none';
-        document.removeEventListener('keydown', movePaddle);
-        ball.style.display = 'none';
-        ball2.style.display = 'none';
-        announceWinner();
+        gameActive = false;
+        cells.forEach(cell => cell.disabled = true);
+        startButton.textContent = 'Restart Game';
+        startButton.style.display = 'block';
     }
 
-    //POST request made from JavaScript so including CSRF token for security.
-    function announceWinner() {
-        const csrfToken = getCookie('csrftoken');
-        const score1 = parseInt(currentScorePlayer1.textContent.split(':')[1].trim());
-        const score2 = parseInt(currentScorePlayer2.textContent.split(':')[1].trim());
-        let result = 'Draw';
-        if (score1 > score2) {
-            result = 'Win';
-        } else if (score2 > score1) {
-            result = 'Lose';
+    
+
+
+    function checkDraw() {
+        return board.every(row => row.every(cell => cell !== ''));
+    }
+
+    function checkWinner() {
+        // Check rows and columns
+        for (let i = 0; i < 4; i++) {
+            if (checkLine(board[i][0], board[i][1], board[i][2], board[i][3])) return true;
+            if (checkLine(board[0][i], board[1][i], board[2][i], board[3][i])) return true;
         }
+        // Check diagonals
+        if (checkLine(board[0][0], board[1][1], board[2][2], board[3][3])) return true;
+        if (checkLine(board[0][3], board[1][2], board[2][1], board[3][0])) return true;
     
-        countdownDisplay.textContent = result === 'Win' ? `${playerName} Wins!` : (result === 'Lose' ? 'Player 2 Wins!' : 'Draw!');
-
-
+        return false;
+    }
     
-        // classic pong 2 balls AI
-        let game_type = 6;
+    function checkLine(a, b, c, d) {
+        return (a === b && a === c && a === d && a !== '');
+    }
+    
+    
+
+    function announceWinner(result) {
+        if (!gameActive) return;  // Prevent multiple postings if the game has already ended
+        gameActive = false;       // Ensure no more game actions can occur
+        const csrfToken = getCookie('csrftoken');
+        let game_type = 12;  
         fetch('/save_game_result/', {
             method: 'POST',
             headers: {
@@ -121,215 +245,11 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: `result=${result}&game_type=${game_type}`
         }).then(response => response.json())
-          .then(data => console.log(data.message));
-
-        return;
+          .then(data => {
+              console.log(data.message);
+              gameStatus.textContent = result === 'Win' ? `${playerName} Wins!` : (result === 'Lose' ? 'Player 2 Wins!' : 'Draw!');
+          });
     }
-
-
-    function formatTime(seconds) {
-        let mins = Math.floor(seconds / 60);
-        let secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-    
-
-    function createPaddle(id) {
-        const paddle = document.createElement('div');
-        paddle.id = id;
-        paddle.classList.add('paddle');
-        return paddle;
-    }
-
-    function createBall(id) {
-        const ball = document.createElement('div');
-        ball.id = id;
-        ball.classList.add('ball');
-        ball.style.position = 'absolute';
-        return ball;
-    }
-
-
-    function movePaddle(event) {
-        const paddleSpeed = 10;
-        const topBoundary = 40;
-        const bottomBoundary = gameArea.clientHeight - paddle1.offsetHeight + 15; // Adjusted boundary
-
-        switch (event.key) {
-            case 'w':
-                paddle1.style.top = `${Math.max(paddle1.offsetTop - paddleSpeed, topBoundary)}px`;
-                break;
-            case 's':
-                paddle1.style.top = `${Math.min(paddle1.offsetTop + paddleSpeed, bottomBoundary)}px`;
-                break;
-        }
-    }
-    
-    function startBotMovement() {
-        const paddleSpeed = 10;
-        const topBoundary = 40;
-        const bottomBoundary = gameArea.clientHeight - paddle2.offsetHeight + 15;
-
-        botMovementInterval = setInterval(() => {
-            let ballY = ball.offsetTop + ball.offsetHeight / 2;
-            let paddleY = paddle2.offsetTop + paddle2.offsetHeight / 2;
-            if (ballY < paddleY - paddleSpeed) {
-                paddle2.style.top = `${Math.max(paddle2.offsetTop - paddleSpeed, topBoundary)}px`;
-            } else if (ballY > paddleY + paddleSpeed) {
-                paddle2.style.top = `${Math.min(paddle2.offsetTop + paddleSpeed, bottomBoundary)}px`;
-            }
-        }, 1000);
-    }
-
-    // Event listeners
-    document.addEventListener('keydown', movePaddle);
-    startButton.addEventListener('click', startGameSequence);    
-
-
-    // Add event listener to prevent default scrolling behavior
-    // document.addEventListener('keydown', function(event) {
-    //     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-    //         event.preventDefault();
-    //     }
-    // });
-
-    
-
-    function moveBall2() {
-        let ballSpeedX = 1; 
-        let ballSpeedY = 1;
-        movementInterval2 = setInterval(function() {
-            let nextX = ball2.offsetLeft + ballSpeedX;
-            let nextY = ball2.offsetTop + ballSpeedY;
-    
-            // Collision with top or bottom boundaries
-            if (nextY <= 0 || nextY >= gameArea.clientHeight - ball2.offsetHeight) {
-                ballSpeedY *= -1;
-            }
-    
-            // Handle player-ball collisions
-            if (nextX - ball2.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
-                if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball2.offsetHeight >= paddle1.offsetTop) {
-                    nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball2.offsetWidth;
-                    ballSpeedX *= -1;
-                    ballSpeedY *= -1;
-                }
-            }
-    
-    
-            // Collision with right paddle
-            if (nextX + ball.offsetWidth >= paddle2.offsetLeft && nextY + ball.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle2.offsetLeft - ball.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-            // Collision with left paddle
-            if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth && nextY + ball.offsetHeight > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle1.offsetLeft + paddle1.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-
-            // Collision with left or right boundaries (score update)
-            if (nextX <= 0) {
-                updateScore('player2');
-                resetBall2();
-                return;
-            } else if (nextX >= gameArea.clientWidth - ball2.offsetWidth) {
-                updateScore('player1');
-                resetBall2();
-                return;
-            }
-    
-            ball2.style.left = `${nextX}px`;
-            ball2.style.top = `${nextY}px`;
-        }, 20);
-    }
-    
-    function resetBall2() {
-        ball2.style.left = `${gameArea.clientWidth / 2 - ball2.offsetWidth / 2}px`;
-        ball2.style.top = `${gameArea.clientHeight / 2 - ball2.offsetHeight / 2}px`;
-    }
-    
-
-    function moveBall() {
-        let ballSpeedX = -1;
-        let ballSpeedY = 1;
-        movementInterval = setInterval(function() {
-            let nextX = ball.offsetLeft + ballSpeedX;
-            let nextY = ball.offsetTop + ballSpeedY;
-
-            // Collision with top or bottom boundaries
-            if (nextY <= 0 || nextY >= gameArea.clientHeight - ball.offsetHeight) {
-                ballSpeedY *= -1;
-            }
-
-            // Handle player-ball collisions
-            if (nextX - ball.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
-                if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball.offsetHeight >= paddle1.offsetTop) {
-                    nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball.offsetWidth;
-                    ballSpeedX *= -1; // Reverse the horizontal direction
-                    ballSpeedY *= -1; // Reverse the vertical direction
-                }
-            }
-
-            //should this be ball2?
-            // Collision with right paddle
-            if (nextX + ball.offsetWidth >= paddle2.offsetLeft && nextY + ball.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle2.offsetLeft - ball.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-            // Collision with left paddle
-            if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth && nextY + ball.offsetHeight > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle1.offsetLeft + paddle1.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-
-            // Collision with left or right boundaries (score update)
-            if (nextX <= 0) {
-                // Ball hits left boundary, score for the player on the right
-                updateScore('player2');
-                resetBall();
-                return; // Stop further updates within this tick
-            } else if (nextX >= gameArea.clientWidth - ball.offsetWidth) {
-                // Ball hits right boundary, score for the player on the left
-                updateScore('player1');
-                resetBall();
-                return; // Stop further updates within this tick
-            }
-
-            ball.style.left = `${nextX}px`;
-            ball.style.top = `${nextY}px`;
-        }, 20);
-    }
-    
-    function resetBall() {
-        ball.style.left = `${gameArea.clientWidth / 2 - ball.offsetWidth / 2}px`;
-        ball.style.top = `${gameArea.clientHeight / 2 - ball.offsetHeight / 2}px`;
-    }
-    
-
-
-    // Add event listener to prevent default scrolling behavior
-    // document.addEventListener('keydown', function(event) {
-    //     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-    //         event.preventDefault();
-    //     }
-    // });
-
-
-    
-    function updateScore(player) {
-        const scoreElement = player === 'player1' ? currentScorePlayer1 : currentScorePlayer2;
-        let score = parseInt(scoreElement.textContent.split(': ')[1]) + 1;
-        let playerLabel = player === 'player1' ? playerName : 'AI';  
-        scoreElement.textContent = `${playerLabel}: ${score}`;
-    }
-
-
-   
 
     function getCookie(name) {
         let cookieValue = null;
@@ -346,7 +266,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return cookieValue;
     }
 
+
+    
 });
-
-
-
