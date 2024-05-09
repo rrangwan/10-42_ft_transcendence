@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load i18n %}
 {% load static %}
 
 {% block content %}
@@ -7,12 +7,14 @@
     var playerName = "{{ nickname }}";
 </script>
 <main class="container mt-4">
+
     <div id="tic-tac-toe-board" class="game-board">
         {% for row in "012" %}
         <div class="board-row">
             {% for col in "012" %}
             <button class="cell" id="cell-{{ forloop.parentloop.counter0 }}{{ forloop.counter0 }}"></button>
             {% endfor %}
+
         </div>
         {% endfor %}
     </div>

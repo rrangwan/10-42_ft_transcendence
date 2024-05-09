@@ -1,0 +1,249 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-04 13:29+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: templates/base.html:18
+msgid "Skip to main content"
+msgstr "الذهاب للمحتوى الرئيسي"
+
+#: templates/base.html:31
+msgid "Home"
+msgstr "الصفحة الرئيسية"
+
+#: templates/base.html:34
+msgid "Play Games"
+msgstr "الألعاب"
+
+#: templates/base.html:37
+msgid "View Stats"
+msgstr "الإحصائيات"
+
+#: templates/base.html:40 templates/profile.html:4
+msgid "User Profile"
+msgstr "ملف المستخدم"
+
+#: templates/base.html:46 templates/logout.html:3 templates/logout.html:7
+#: templates/logout.html:11
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+#: templates/games.html:6
+msgid "Choose a game:"
+msgstr "إختار اللعبة"
+
+#: templates/games.html:13
+msgid "Pong Classic"
+msgstr "تنس الطاولة الكلاسيكي"
+
+#: templates/games.html:21
+msgid "Pong Classic Tournament"
+msgstr "بطولة تنس الطاولة الكلاسيكية"
+
+#: templates/games.html:29
+msgid "Pong Classic AI"
+msgstr "تنس الطاولة مع الذكاء الإصطناعي"
+
+#: templates/games.html:39
+msgid "Pong 2 Balls"
+msgstr "تنس الطاولة بكرتين"
+
+#: templates/games.html:47
+msgid "Pong 2 Balls Tournament"
+msgstr "بطولة تنس الطاولة بكرتين"
+
+#: templates/games.html:55
+msgid "Pong 2 Balls AI"
+msgstr "تنس الطاولة مع الذكاء الإصطناعي بكرتين"
+
+#: templates/games.html:65
+msgid "tic-tac-toe Classic"
+msgstr ""
+
+#: templates/games.html:73
+msgid "بطولة إكس أو الكلاسيكية"
+msgstr ""
+
+#: templates/games.html:81
+msgid "إكس أو مع الذكاء الإصطناعي"
+msgstr ""
+
+#: templates/games.html:91
+msgid "tic-tac-toe Modified"
+msgstr "إكس أو المعدلة"
+
+#: templates/games.html:99
+msgid "tic-tac-toe Modified Tournament"
+msgstr "بطولة إكس أو المعدلة"
+
+#: templates/games.html:107
+msgid "tic-tac-toe Modified AI"
+msgstr "بطولة إكس أو المعدلة مع الذكاء الإصطناعي"
+
+#: templates/index.html:6
+msgid "Welcome back, "
+msgstr " أهلا بعودتك"
+
+#: templates/index.html:7
+msgid "Enjoy your stay at our Game Portal."
+msgstr "إستمتع بزيارتك لمنصتنا"
+
+#: templates/index.html:10
+msgid "Welcome to our Game Portal!"
+msgstr "!مرحبا بك في منصتنا للألعاب"
+
+#: templates/index.html:11
+msgid "Please "
+msgstr "من فضلك"
+
+#: templates/index.html:11
+msgid "log in"
+msgstr "تسجيل الدخول"
+
+#: templates/index.html:11
+msgid "register"
+msgstr "التسجيل"
+
+#: templates/index.html:11
+msgid "to explore the games."
+msgstr "أكتشف الألعاب"
+
+#: templates/login.html:3 templates/login.html:7 templates/login.html:11
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+#: templates/login.html:12 templates/register.html:4 templates/register.html:11
+#: templates/register.html:16
+msgid "التسجيل"
+msgstr ""
+
+#: templates/logout.html:8
+msgid "Are you sure you want to logout?"
+msgstr "هل أنت متأكد من رغبتك بتسجيل الخروج"
+
+#: templates/logout.html:12
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: templates/pong_AI.html:17 templates/pong_AI2.html:17
+#: templates/pong_game.html:17 templates/pong_game2.html:17
+#: templates/pong_tour.html:57 templates/pong_tour2.html:57
+#: templates/tic_AI.html:17 templates/tic_AI2.html:17
+#: templates/tic_tour.html:57 templates/tic_tour2.html:57
+msgid "Time Left:"
+msgstr "الوقت المتبقي"
+
+#: templates/pong_AI.html:20 templates/pong_AI2.html:20
+#: templates/tic_AI.html:20 templates/tic_AI2.html:20
+msgid "AI:"
+msgstr "الذكاء الإصطناعي"
+
+#: templates/pong_AI.html:26 templates/pong_AI2.html:26
+#: templates/pong_game.html:26 templates/pong_game2.html:26
+#: templates/tic_AI.html:26 templates/tic_AI2.html:26
+#: templates/tic_game.html:20 templates/tic_game2.html:20
+msgid "Start Game"
+msgstr "أبدأ اللعبة"
+
+#: templates/pong_game.html:20 templates/pong_game2.html:20
+msgid "Player 2:"
+msgstr "اللاعب الثاني"
+
+#: templates/pong_tour.html:16 templates/pong_tour2.html:16
+#: templates/tic_tour.html:16 templates/tic_tour2.html:16
+msgid "Submit Aliases"
+msgstr "تسجيل المنافسين"
+
+#: templates/pong_tour.html:22 templates/pong_tour2.html:22
+#: templates/tic_tour.html:22 templates/tic_tour2.html:22
+msgid "Total Game Score"
+msgstr "إجمالي النقاط"
+
+#: templates/pong_tour.html:26 templates/pong_tour2.html:26
+#: templates/tic_tour.html:26 templates/tic_tour2.html:26
+msgid "Player"
+msgstr "الاعب"
+
+#: templates/pong_tour.html:27 templates/pong_tour2.html:27
+#: templates/tic_tour.html:27 templates/tic_tour2.html:27
+msgid "Points"
+msgstr "النقاط"
+
+#: templates/pong_tour.html:36 templates/pong_tour2.html:36
+#: templates/tic_tour.html:36 templates/tic_tour2.html:36
+msgid "Player 2"
+msgstr "اللاعب الثاني"
+
+#: templates/pong_tour.html:40 templates/pong_tour2.html:40
+#: templates/tic_tour.html:40 templates/tic_tour2.html:40
+msgid "Player 3"
+msgstr "الاعب الثالث"
+
+#: templates/pong_tour.html:53 templates/pong_tour2.html:53
+#: templates/tic_tour.html:53 templates/tic_tour2.html:53
+msgid "Start Tournament"
+msgstr "إبدأ البطولة"
+
+#: templates/profile.html:8
+msgid "Nickname"
+msgstr "الإسم المستعار"
+
+#: templates/profile.html:19
+msgid "Profile Picture"
+msgstr "صورة الحساب"
+
+#: templates/profile.html:32
+msgid "Update"
+msgstr "تحديث"
+
+#: templates/register.html:20
+msgid "Already have an account?"
+msgstr " لديك حساب بالفعل"
+
+#: templates/register.html:20
+msgid "Login here"
+msgstr "تسجيل الدخول هنا"
+
+#: templates/stats copy.html:4 copy.html:9 templates/stats.html:4
+#: templates/stats.html:9 templates/stats_old.html:5
+#: templates/stats_old.html:10
+msgid "Game Statistics"
+msgstr "إحصائيات اللعبة"
+
+#: templates/stats copy.html:12 templates/stats.html:12
+#: templates/stats_old.html:13
+msgid "Games"
+msgstr "الألعاب"
+
+#: templates/stats copy.html:23 templates/stats.html:22
+#: templates/stats_old.html:24
+msgid "No games played yet for this type."
+msgstr "لم تم لعبها بعد"
+
+#: templates/tic_game.html:19 templates/tic_game2.html:19
+msgid "Press Start to play!"
+msgstr "أضعط أبدأ للعب"
+
+#: templates/base.html:53 templates/base.html:54
+msgid "Font"
+msgstr "حجم الخط"
+
+#: templates/base.html:55
+msgid "Reset Font Size"
+msgstr "حجم الخط التلقائي"

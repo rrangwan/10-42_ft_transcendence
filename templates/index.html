@@ -1,14 +1,15 @@
-{% extends 'base.html' %}
 
+{% extends 'base.html' %}
+{% load i18n %}
 {% block content %}
 <main class="container mt-5">
     {% if is_authenticated %}
-    <h1>Welcome back, {{ request.user.userprofile.nickname }}!</h1>
-    <p>Enjoy your stay at our Game Portal.</p>
-    <a href="{% url 'games' %}" class="btn btn-primary">Play Games</a>
+    <h1>{% trans "Welcome back, " %}{{ request.user.userprofile.nickname }}!</h1>
+    <p>{% trans "Enjoy your stay at our Game Portal." %}</p>
+    <a href="{% url 'games' %}" class="btn btn-primary">{% trans "Play Games" %}</a>
     {% else %}
-    <h1>Welcome to our Game Portal!</h1>
-    <p>Please <a href="{% url 'login' %}">log in</a> or <a href="{% url 'register' %}">register</a> to explore the games.</p>
+    <h1>{% trans "Welcome to our Game Portal!" %}</h1>
+    <p>{% trans "Please " %}<a href="{% url 'login' %}">{% trans "log in" %}</a> or <a href="{% url 'register' %}">{% trans "register" %}</a> {% trans "to explore the games." %}</p>
     {% endif %}
 </main>
 {% endblock %}

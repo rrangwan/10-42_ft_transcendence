@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load i18n %}
 {% load static %}
 
 {% block content %}
@@ -16,8 +16,8 @@
         </div>
         {% endfor %}
     </div>
-    <p id="game-status">Press Start to play!</p>
-    <button id="start-button">Start Game</button>
+    <p id="game-status">{% trans "Press Start to play!" %}</p>
+    <button id="start-button">{% trans "Start Game" %}</button>
     <div id="countdown"></div>
 </main>
 {% endblock %}

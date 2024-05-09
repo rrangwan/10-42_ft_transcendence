@@ -76,8 +76,15 @@ environ.Env.read_env(env_file='../.env')
 
 
 DATABASES = {
-    'default': env.db()
- }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'trans_db'),
+        'USER': os.getenv('POSTGRES_USER', 'rrangwan'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'raj123'),
+        'HOST': 'db',
+        'PORT': '5432',
+    }
+}
 
 # DATABASES = {
 #     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
@@ -114,13 +121,24 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'en-us'
+LANGUAGES = [
+    ('en', 'English'),
+    ('hi', 'Hindi'),
+    ('es', 'Spanish'),
+    ('ar', 'Arabic')
+    # Add more languages as needed
+]
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 USE_I18N = True
-
 USE_L10N = True
+
+TIME_ZONE = 'UTC'
 
 USE_TZ = True
 

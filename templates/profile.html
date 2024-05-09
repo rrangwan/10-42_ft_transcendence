@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-
+{% load i18n %}
 {% block content %}
-<h2>User Profile</h2>
+<h2>{% trans "User Profile" %}</h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="mb-3">
-        <label for="nickname" class="form-label">Nickname</label>
+        <label for="nickname" class="form-label">{% trans "Nickname" %}</label>
         {{ form.nickname }}
         {% if form.nickname.errors %}
             <div class="alert alert-danger">
@@ -16,7 +16,7 @@
         {% endif %}
     </div>
     <div class="mb-3">
-        <label for="profile_pic" class="form-label">Profile Picture</label>
+        <label for="profile_pic" class="form-label">{% trans "Profile Picture" %}</label>
         {{ form.profile_pic }}
         {% if form.profile_pic.errors %}
             <div class="alert alert-danger">
@@ -29,6 +29,6 @@
             <img src="{{ user.userprofile.profile_pic.url }}" alt="Profile Pic" style="width: 150px;">
         {% endif %}
     </div>
-    <button type="submit" class="btn btn-primary">Update</button>
+    <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
 </form>
 {% endblock %}
