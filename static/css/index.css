@@ -1,0 +1,52 @@
+.main-background {
+    background-image: url('images/pic_index.svg'); /* Замените это на реальный путь к изображению */
+    background-size: cover; /* Покрыть всю доступную область */
+    background-position: center; /* Центрировать изображение */
+    height: 100vh; /* Задать высоту контейнера */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.container h1 {
+    font-size: 24px;
+    color: #6200EA; /* Цвет заголовка, настраиваемый */
+    margin-bottom: 20px;
+}
+
+.container p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.container a {
+    font-weight: bold;
+    color: #6200EA; /* Цвет ссылок, настраиваемый */
+    text-decoration: none;
+    background-color: #EDE7F6; /* Фон ссылок */
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.container a:hover {
+    background-color: #D1C4E9; /* Цвет фона ссылки при наведении */
+}
+
+.btn {
+    background-color: #4CAF50; /* Цвет кнопки */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background-color: #6200EA; /* Фиолетовая кнопка */
+}
+
+.btn-primary:hover {
+    background-color: #7C4DFF; /* Темно-фиолетовая при наведении */
+}
