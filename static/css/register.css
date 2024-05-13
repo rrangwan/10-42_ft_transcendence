@@ -1,0 +1,70 @@
+
+
+.register-form .col-md-6 {
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    width: 100%; /* Адаптируйте ширину по необходимости */
+    max-width: 450px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.register-form h2 {
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="email"], .form-group input[type="password"], .form-group input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #EDE7F6; /* Светло-фиолетовый фон */
+}
+
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc; /* Граница, если нужна */
+    border-radius: 5px; /* Скругление углов */
+    background-color: #EDE7F6; /* Светло-фиолетовый фон */
+    color: #333; /* Цвет текста */
+    font-size: 16px; /* Размер шрифта */
+}
+
+.form-group input:focus {
+    outline: none; /* Убираем стандартную рамку фокуса */
+    box-shadow: 0 0 5px rgba(141, 110, 198, 0.5); /* Добавляем тень при фокусе */
+}
+
+
+/* .btn-primary {
+    width: 100%;
+    padding: 10px;
+    background-color: #000; /* Черная кнопка */
+/*    color: white;
+    border-radius: 5px;
+    border: none;
+} */
+
+.btn-primary:hover {
+    background-color: #333;
+}
+
+.btn-link {
+    color: #6200EA; /* Фиолетовый цвет ссылки */
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}

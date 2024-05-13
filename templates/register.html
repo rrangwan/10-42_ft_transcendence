@@ -1,11 +1,13 @@
-{% extends "base.html" %}
-{% load i18n %}
+{% extends 'base.html' %}
+{% load static i18n %}
+
 {% block title %}
-{% trans "Register" %} - 42 Transcendence
+{% trans "Login" %} - My Website
 {% endblock %}
 
+
 {% block content %}
-<main class="container mt-5">
+<main class="container mt-5 register-form">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h2 class="mb-3">{% trans "Register" %}</h2>

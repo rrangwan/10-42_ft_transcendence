@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
-{% load i18n %}
-<head>
-    <title>{% block title %}My Website{% endblock %}</title>
-</head>
+{% load i18n static %}
+
+
+{% block title %}
+{% trans "Login" %} - My Website
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container mt-4 login-form">
     <h2>{% trans "Login" %}</h2>
     <form method="post">
         {% csrf_token %}
@@ -15,3 +17,6 @@
     </form>
 </div>
 {% endblock %}
+
+
+

@@ -17,6 +17,12 @@ body {
     text-decoration: none; /* No underline unless focused */
 }
 
+body {
+    background-color: #F1E1FF; /* Светло-фиолетовый фон */
+}
+/* body {
+    background-color: #EDE7F6; /* Светло-фиолетовый фон */
+/* } */ */
 .skip-link:focus {
     text-decoration: underline; /* Underline to indicate focus */
     color: #007BFF;
@@ -66,10 +72,17 @@ button:focus {
 }
 .game-container {
     position: relative;
+    margin: 0 auto;
     max-width: 600px;
     height: 400px;  
     background-color: #000;
 }
+
+#game-timer {
+    text-align: center; /* Центрирование текста */
+    width: 100%; /* Обеспечение полной ширины в рамках колонки */
+}
+
 
 .ball {
     width: 20px;
@@ -85,7 +98,7 @@ button:focus {
 
 /* Styling for the game statistics sections */
 .game-stats-section {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.707);
     border: 1px solid #ccc;
     padding: 15px;
     margin-top: 20px;
@@ -103,6 +116,13 @@ button:focus {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
 }
+
+.chart-container {
+    display: flex;
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+}
+
 
 /* Canvas for charts */
 canvas {
@@ -168,3 +188,28 @@ canvas {
     font-size: 1.2em;
 }
 
+#language-select {
+    padding: 6.5px 22px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #6e757c;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('/static/images/down-arrow.svg');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 12px;
+    width: 100%;
+    color: white;  
+}
+
+#language-select:hover {
+    border-color: #888;
+}
+
+#language-select:focus {
+    border-color: #0056b3;
+    outline: none;
+}
