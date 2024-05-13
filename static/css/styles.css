@@ -17,6 +17,13 @@ body {
     text-decoration: none; /* No underline unless focused */
 }
 
+.skip-link {
+    color: #000000; /* Black text color */
+    padding: 8px;
+    z-index: 100;
+    text-decoration: none; /* No underline unless focused */
+}
+
 body {
     background-color: #F1E1FF; /* Светло-фиолетовый фон */
 }
