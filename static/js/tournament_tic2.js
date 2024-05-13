@@ -68,13 +68,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateGameStatus() {
         let status;
         if (gameSequence === 0) {  // Round 1: Player1 (X) vs Player2 (O)
-            status = `${playerNames[0]} vs ${playerNames[1]} (${player})'s turn`;
+            status = `${playerNames[0]} 'X' vs ${playerNames[1]} 'O' <br>(${player})'s turn`;
         } else if (gameSequence === 1) {  // Round 2: Player1 (X) vs Player3 (O)
-            status = `${playerNames[0]} vs ${playerNames[2]} (${player})'s turn`;
+            status = `${playerNames[0]} 'X' vs ${playerNames[2]} 'O' <br>(${player})'s turn`;
         } else if (gameSequence === 2) {  // Round 3: Player2 (X) vs Player3 (O)
-            status = `${playerNames[1]} vs ${playerNames[2]} (${player})'s turn`;
+            status = `${playerNames[1]} 'X' vs ${playerNames[2]} 'O' <br>(${player})'s turn`;
         }
-        gameStatus.textContent = status;
+        gameStatus.innerHTML = status; //changed to accomodate <br>
     }
     
     function togglePlayer(initial = false) {

@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitAliasesButton = document.getElementById('submit-aliases');
     const startButton = document.getElementById('start-button');
     const aliasInputs = document.getElementById('alias-inputs');
+    const gameStatus = document.getElementById('status');
 
     // Element references for updating the player names and scores
     const currentNamePlayer1 = document.getElementById('current-name-player1');
@@ -21,7 +22,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentScores = [0, 0, 0];
     let gameSequence = 0;
     let movementInterval;
-
+    let ballSpeedX = 0.75;
+    let ballSpeedY = 0.75;
+    
     // Setup the Pong game elements
     const gameArea = document.getElementById('pong-game');
     const paddle1 = createPaddle('paddle1');
@@ -30,6 +33,11 @@ document.addEventListener('DOMContentLoaded', function () {
     gameArea.appendChild(paddle1);
     gameArea.appendChild(paddle2);
     gameArea.appendChild(ball);
+
+
+    // let movementInterval; //old way
+    let gameActive = false;
+    let animationFrameId = requestAnimationFrame(moveBall);
 
     submitAliasesButton.addEventListener('click', function() {
         const aliases = [player2AliasInput.value.trim(), player3AliasInput.value.trim()];
@@ -89,15 +97,17 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!countdown) {
                 clearInterval(interval);
                 countdownElement.textContent = '';
+                gameStatus.textContent = '';
                 startPongGame(player1Index, player2Index);
             }
         }, 1000);
     }
 
     function startPongGame(player1Index, player2Index) {
+        gameActive = true;
         resetBall(); // Position the ball in the middle
         let timeLeft = 30; // 
-    
+        requestAnimationFrame(moveBall);
         let timerElement = document.getElementById('game-timer');
         timerElement.textContent = 'Time Left: ' + formatTime(timeLeft); // Update UI
     
@@ -108,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (timeLeft <= 0) {
                 clearInterval(interval);
                 stopPongGame(); // Stops the pong game ball movement and key listeners
+                gameActive = false;
                 concludeRound(player1Index, player2Index);
             }
         }, 1000);
@@ -119,10 +130,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.addEventListener('keydown', handleKeypress);
 
-        moveBall(); // Start moving the ball
+        requestAnimationFrame(moveBall); // Start moving the ball
 
         function stopPongGame() {
             clearInterval(movementInterval); // Assume movementInterval is your global var for moveBall interval
+            cancelAnimationFrame(animationFrameId);
             document.removeEventListener('keydown', handleKeypress); // Remove key listener when round ends
         }
 }
@@ -134,7 +146,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function concludeRound(player1Index, player2Index) {
-        alert(`Round over between ${playerNames[player1Index]} and ${playerNames[player2Index]}`);
+        // gameStatus.textContent = `Round over between ${playerNames[player1Index]} and ${playerNames[player2Index]}`;
+
         if (gameSequence < 3) {
             startGameSequence(); // Setup the next round or end the game
         } else {
@@ -179,54 +192,69 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function moveBall() {
-        let ballSpeedX = 2;
-        let ballSpeedY = 2;
-        movementInterval = setInterval(function() {
-            let nextX = ball.offsetLeft + ballSpeedX;
-            let nextY = ball.offsetTop + ballSpeedY;
+        // ballSpeedX = 1;
+        // ballSpeedY = 1;
+        console.log('moveBall called', { ballSpeedX, ballSpeedY, gameActive });
+    
+        if (!gameActive) {
+            console.log('Game is not active. Exiting moveBall.');
+            return;
+        }
+    
+        let nextX = ball.offsetLeft + ballSpeedX;
+        let nextY = ball.offsetTop + ballSpeedY;
 
-            // Collision with top or bottom boundaries
-            if (nextY <= 0 || nextY >= gameArea.clientHeight - ball.offsetHeight) {
-                ballSpeedY *= -1;
+        // Collision with top or bottom boundaries
+        if (nextY <= 0 || nextY + ball.offsetHeight >= gameArea.clientHeight) {
+            ballSpeedY = -ballSpeedY;
+            nextY = nextY <= 0 ? 0 : gameArea.clientHeight - ball.offsetHeight;  // Adjust to remain within bounds
+        }
+
+        // Handle player-ball collisions
+        if (nextX - ball.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
+            if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball.offsetHeight >= paddle1.offsetTop) {
+                nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball.offsetWidth;
+                ballSpeedX = -ballSpeedX; // Reverse the horizontal direction
+                // ballSpeedY *= -1; // Reverse the vertical direction
             }
+        }
 
-            // Handle player-ball collisions
-            if (nextX - ball.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
-                if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball.offsetHeight >= paddle1.offsetTop) {
-                    nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball.offsetWidth;
-                    ballSpeedX = -ballSpeedX; // Reverse the horizontal direction
-                    ballSpeedY *= -1; // Reverse the vertical direction
-                }
+        // Adjusted collision logic for right paddle (paddle2)
+        if (nextX + ball.offsetWidth >= paddle2.offsetLeft && nextX < paddle2.offsetLeft + paddle2.offsetWidth) {
+            if (nextY + ball.offsetHeight > paddle2.offsetTop && nextY <        paddle2.offsetTop + paddle2.offsetHeight) 
+            {
+                ballSpeedX = -Math.abs(ballSpeedX);  // Ensure the ball always bounces back left
+                nextX = paddle2.offsetLeft - ball.offsetWidth;  // Correctly position ball outside the paddle
             }
+        }
 
-            // Collision with right paddle
-            if (nextX + ball.offsetWidth >= paddle2.offsetLeft && nextY + ball.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle2.offsetLeft - ball.offsetWidth}px`;  // Move ball outside the paddle
-            }
+        // Collision with left paddle
+        if (nextX <= paddle1.offsetLeft - 15 + paddle1.offsetWidth && nextY + ball.offsetHeight + 15 > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight + 15) {
+            ballSpeedX *= -1;  // Reverse the horizontal direction
+            ball.style.left = `${paddle1.offsetLeft + paddle1.offsetWidth}px`;  // Move ball outside the paddle
+        }
 
-            // Collision with left paddle
-            if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth && nextY + ball.offsetHeight > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle1.offsetLeft + paddle1.offsetWidth}px`;  // Move ball outside the paddle
-            }
+        // Collision with left or right boundaries (score update)
+        if (nextX <= 10) {
+            // Ball hits left boundary, score for the player on the right
+            updateScore(rightPlayerIndex(gameSequence));
+            resetBall();
+            return; // Stop further updates within this tick
+        } else if (nextX >= gameArea.clientWidth - ball.offsetWidth + 5) {
+            // Ball hits right boundary, score for the player on the left
+            updateScore(leftPlayerIndex(gameSequence));
+            resetBall();
+            return; // Stop further updates within this tick
+        }
 
-            // Collision with left or right boundaries (score update)
-            if (nextX <= 0) {
-                // Ball hits left boundary, score for the player on the right
-                updateScore(rightPlayerIndex(gameSequence));
-                resetBall();
-                return; // Stop further updates within this tick
-            } else if (nextX >= gameArea.clientWidth - ball.offsetWidth) {
-                // Ball hits right boundary, score for the player on the left
-                updateScore(leftPlayerIndex(gameSequence));
-                resetBall();
-                return; // Stop further updates within this tick
-            }
+        ball.style.left = `${nextX}px`;
+        ball.style.top = `${nextY}px`;
 
-            ball.style.left = `${nextX}px`;
-            ball.style.top = `${nextY}px`;
-        }, 20);
+        if (gameActive) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(moveBall);
+        }
+
     }
 
 
@@ -268,8 +296,25 @@ document.addEventListener('keydown', function(event) {
 
 
     function resetBall() {
+        ballSpeedX = 0;
+        ballSpeedY = 0;
+        console.log("is game active? ", gameActive);
+
         ball.style.left = `${gameArea.clientWidth / 2 - ball.offsetWidth / 2}px`;
         ball.style.top = `${gameArea.clientHeight / 2 - ball.offsetHeight / 2}px`;
+        
+        if (!gameActive) {
+            return;  // Ensure no reset if the game is no longer active
+        } 
+        // Reset speeds to a manageable level
+        ballSpeedX = -0.75; // Set a default initial speed that does not instantly score
+        ballSpeedY =  0.75;
+    
+        setTimeout(() => {
+            if (gameActive) {  // Only restart the game loop if the game is still active
+            cancelAnimationFrame(animationFrameId);
+            requestAnimationFrame(moveBall);}
+        }, 500); // Pause for half a second before starting motion again
     }
 
     function determineWinner() {
@@ -284,17 +329,23 @@ document.addEventListener('keydown', function(event) {
         let result;
         if (winners.length > 1) {
             if (winners.includes(playerNames[0])) {
-                alert('The game is a draw between: ' + winners.join(', '));
+                gameStatus.textContent = 'The game is a draw between: ' + winners.join(', ');
                 result = 'Draw';
+
             } else {
-                alert('Player 1 did not win. The winners are: ' + winners.join(', '));
+                gameStatus.textContent = 'The winners are: ' + winners.join(', ');
                 result = 'Lose';
+
             }
         } else {
-            alert('Winner is: ' + winners[0]);
+            gameStatus.textContent = 'Winner is: ' + winners[0];
             result = (winners[0] === playerNames[0]) ? 'Win' : 'Lose';
-        }
 
+        }
+        paddle1.display = 'none';
+        paddle2.display = 'none';
+        ball.style.display = 'none'; 
+        cancelAnimationFrame(animationFrameId);
         announceWinner(result);
     }
 
@@ -315,7 +366,7 @@ document.addEventListener('keydown', function(event) {
 
     function announceWinner(result) {
         const csrfToken = getCookie('csrftoken');
-        let game_type = 2; // Assuming '2' is your designated game type for this tournament
+        let game_type = 2; 
 
         fetch('/save_game_result/', {
             method: 'POST',

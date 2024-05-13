@@ -11,13 +11,11 @@ document.addEventListener('DOMContentLoaded', function () {
     
 
     // Initialize
-    let movementInterval;
-    let movementInterval2;
     let gameActive = false;
-    let ballSpeedX2 = 1.1; 
-    let ballSpeedY2 = 1.1;
-    let ballSpeedX = -1.1; 
-    let ballSpeedY = 1.1;
+    let ballSpeedX2 = 0.75; 
+    let ballSpeedY2 = 0.75;
+    let ballSpeedX = -0.5; 
+    let ballSpeedY = 0.5;
 
     // Setup the Pong game elements
     const gameArea = document.getElementById('pong-game');
@@ -63,11 +61,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function startPongGame(player1Index, player2Index) {
         console.log("Game starting...");
-        gameActive = true;
         resetBall(); // Position the ball in the middle
         resetBall2();
-        moveBall(); // Start moving the ball
-        moveBall2();
+        gameActive = true;
+        requestAnimationFrame(moveBall);
+        requestAnimationFrame(moveBall2);
+
         startGameTimer();
 
     }
@@ -86,17 +85,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function endGame() {
-        if (!gameActive) {
-            return; // If game is already inactive, do nothing.
-        }
-        gameActive = false;
         clearInterval(movementInterval);
         clearInterval(movementInterval2);
+        document.removeEventListener('keydown', movePaddle);
         ball.style.display = 'none';
         ball2.style.display = 'none';
-        paddle1.display = 'none';
-        paddle2.display = 'none';
-        document.removeEventListener('keydown', movePaddle);
         announceWinner();
     }
 
@@ -190,152 +183,107 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
 
-    function moveBall2() {
-        ballSpeedX2 = -1; 
-        ballSpeedY2 = -1;
-        movementInterval2 = setInterval(function() {
-            let nextX = ball2.offsetLeft + ballSpeedX2;
-            let nextY = ball2.offsetTop + ballSpeedY2;
-    
-            // Collision with top or bottom boundaries
-            if (nextY <= 0 || nextY >= gameArea.clientHeight - ball2.offsetHeight) {
-                ballSpeedY2 *= -1;
-            }
-    
-            // Handle player-ball collisions
-            if (nextX - ball2.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
-                if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball2.offsetHeight >= paddle1.offsetTop) {
-                    nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball2.offsetWidth;
-                    ballSpeedX2 *= -1;
-                    ballSpeedY2 *= -1;
-                }
-            }
-    
-            ball2.style.left = `${nextX}px`;
-            ball2.style.top = `${nextY}px`;
-
-            // Collision with right paddle
-            if (nextX + ball2.offsetWidth >= paddle2.offsetLeft && nextY + ball2.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
-                ballSpeedX2 *= -1;  // Reverse the horizontal direction
-                ball2.style.left = `${paddle2.offsetLeft - ball2.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-            // Collision with left paddle
-            if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth && nextY + ball2.offsetHeight > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
-                ballSpeedX2 *= -1;  // Reverse the horizontal direction
-                ball2.style.left = `${paddle1.offsetLeft + paddle1.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-
-            // Collision with left or right boundaries (score update)
-            if (nextX <= 0) {
-                updateScore('player2');
-                resetBall2();
-                return;
-            } else if (nextX >= gameArea.clientWidth - ball2.offsetWidth) {
-                updateScore('player1');
-                resetBall2();
-                return;
-            }
-    
-            ball2.style.left = `${nextX}px`;
-            ball2.style.top = `${nextY}px`;
-        }, 20);
-    }
     
     function resetBall2() {
-
         ballSpeedX2 = 0;
         ballSpeedY2 = 0;
-    
+        console.log("is game2 active? ", gameActive);
+
         ball2.style.left = `${gameArea.clientWidth / 2 - ball2.offsetWidth / 2}px`;
         ball2.style.top = `${gameArea.clientHeight / 2 - ball2.offsetHeight / 2}px`;
         
-        if (!gameActive) {
-            return;  // Ensure no reset or movement starts if the game is no longer active
-        }
-        
-        ballSpeedX2 = -1; // Standard initial speed
-        ballSpeedY2 = 1;
-
+        if (!gameActive) 
+            return;  // Ensure no reset if the game is no longer active
+    
+        // Reset speeds to a manageable level
+        ballSpeedX2 = 0.75; // Set a default initial speed that does not instantly score
+        ballSpeedY2 = 0.75;
+    
+        setTimeout(() => {
+            if (gameActive) {  // Only restart the game loop if the game is still active
+            requestAnimationFrame(moveBall2);}
+        }, 500); // Pause for half a second before starting motion again
     }
     
-    
-
     function moveBall() {
-        ballSpeedX = 1
-        ballSpeedY = 1;
-        movementInterval = setInterval(function() {
-            let nextX = ball.offsetLeft + ballSpeedX;
-            let nextY = ball.offsetTop + ballSpeedY;
+        let nextX = ball.offsetLeft + ballSpeedX;
+        let nextY = ball.offsetTop + ballSpeedY;
+    
+        if (nextY <= 0 || nextY >= gameArea.clientHeight - ball.offsetHeight) {
+            ballSpeedY *= -1;  // Reverse direction on hitting top/bottom boundaries
+        }
+    
+        ball.style.left = `${nextX}px`;
+        ball.style.top = `${nextY}px`;
 
-            // Collision with top or bottom boundaries
-            if (nextY <= 0 || nextY >= gameArea.clientHeight - ball.offsetHeight) {
-                ballSpeedY *= -1;
-            }
-
-            // Handle player-ball collisions
-            if (nextX - ball.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
-                if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball.offsetHeight >= paddle1.offsetTop) {
-                    nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball.offsetWidth;
-                    ballSpeedX *= -1; // Reverse the horizontal direction
-                    ballSpeedY *= -1; // Reverse the vertical direction
-                }
-            }
-
-            ball.style.left = `${nextX}px`;
-            ball.style.top = `${nextY}px`;
-
-            // Collision with right paddle
-            if (nextX + ball.offsetWidth >= paddle2.offsetLeft && nextY + ball.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle2.offsetLeft - ball.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-            // Collision with left paddle
-            if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth && nextY + ball.offsetHeight > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle1.offsetLeft + paddle1.offsetWidth}px`;  // Move ball outside the paddle
-            }
-
-
-            // Collision with left or right boundaries (score update)
-            if (nextX <= 0) {
-                // Ball hits left boundary, score for the player on the right
-                updateScore('player2');
-                resetBall();
-                return; // Stop further updates within this tick
-            } else if (nextX >= gameArea.clientWidth - ball.offsetWidth) {
-                // Ball hits right boundary, score for the player on the left
-                updateScore('player1');
-                resetBall();
-                return; // Stop further updates within this tick
-            }
-
-            ball.style.left = `${nextX}px`;
-            ball.style.top = `${nextY}px`;
-        }, 20);
+        if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth + 10 && nextY + ball.offsetHeight > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
+            ballSpeedX *= -1;  // Reverse horizontal direction on hitting paddle1
+        }
+        if (nextX + ball.offsetWidth - 10 >= paddle2.offsetLeft && nextY + ball.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
+            ballSpeedX *= -1;  // Reverse horizontal direction on hitting paddle2
+        }
+    
+        // Update positions
+        ball.style.left = `${nextX}px`;
+        ball.style.top = `${nextY}px`;
+    
+        if (nextX <= 0 || nextX >= gameArea.clientWidth - ball.offsetWidth) {
+            updateScore(nextX <= 0 ? 'player2' : 'player1');  // Update score based on which side was hit
+            resetBall();  // Reset the ball to the center
+        } else {
+            requestAnimationFrame(moveBall);  // Continue the animation
+        }
+    }
+    
+    function moveBall2() {
+        let nextX = ball2.offsetLeft + ballSpeedX2;
+        let nextY = ball2.offsetTop + ballSpeedY2;
+    
+        if (nextY <= 0 || nextY >= gameArea.clientHeight - ball2.offsetHeight) {
+            ballSpeedY2 *= -1;  // Reverse direction on hitting top/bottom boundaries
+        }
+    
+        ball2.style.left = `${nextX}px`;
+        ball2.style.top = `${nextY}px`;
+        
+        if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth && nextY + ball2.offsetHeight + 10 > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
+            ballSpeedX2 *= -1;  // Reverse horizontal direction on hitting paddle1
+        }
+        if (nextX + ball2.offsetWidth - 10 >= paddle2.offsetLeft && nextY + ball2.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
+            ballSpeedX2 *= -1;  // Reverse horizontal direction on hitting paddle2
+        }
+    
+        ball2.style.left = `${nextX}px`;
+        ball2.style.top = `${nextY}px`;
+    
+        if (nextX <= 0 || nextX >= gameArea.clientWidth - ball2.offsetWidth) {
+            updateScore(nextX <= 0 ? 'player2' : 'player1');  // Update score based on which side was hit
+            resetBall2();  // Reset the ball to the center
+        } else {
+            requestAnimationFrame(moveBall2);  // Continue the animation
+        }
     }
     
     function resetBall() {
-
         ballSpeedX = 0;
         ballSpeedY = 0;
-    
+        console.log("is game active? ", gameActive);
+
         ball.style.left = `${gameArea.clientWidth / 2 - ball.offsetWidth / 2}px`;
         ball.style.top = `${gameArea.clientHeight / 2 - ball.offsetHeight / 2}px`;
         
-        if (!gameActive) {
-            return;  // Ensure no reset or movement starts if the game is no longer active
-        }
-        
-        ballSpeedX = 1; // Standard initial speed
-        ballSpeedY = 1;
+        if (!gameActive) 
+            return;  // Ensure no reset if the game is no longer active
     
-
+        // Reset speeds to a manageable level
+        ballSpeedX = -0.75; // Set a default initial speed that does not instantly score
+        ballSpeedY =  0.75;
+    
+        setTimeout(() => {
+            if (gameActive) {  // Only restart the game loop if the game is still active
+            requestAnimationFrame(moveBall);}
+        }, 500); // Pause for half a second before starting motion again
     }
-    
-    
     
 
 
@@ -349,9 +297,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
     function updateScore(player) {
-        if (!gameActive) {
-            return; // Avoid updating the score if the game is not active
-        }
         const scoreElement = player === 'player1' ? currentScorePlayer1 : currentScorePlayer2;
         let score = parseInt(scoreElement.textContent.split(': ')[1]) + 1;
         let playerLabel = player === 'player1' ? playerName : 'Player 2';  // Use player name or "Player 2"

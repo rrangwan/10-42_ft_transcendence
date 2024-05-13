@@ -11,9 +11,11 @@ document.addEventListener('DOMContentLoaded', function () {
     gameArea.appendChild(ball);
 
     // Game variables
-    let ballSpeedX = 2;
-    let ballSpeedY = 2;
-    let movementInterval;
+    let ballSpeedX = 0.5;
+    let ballSpeedY = 0.5;
+    // let movementInterval; //old way
+    let gameActive = false;
+    let animationFrameId;
     const player1Score = document.getElementById('player1-score');
     const player2Score = document.getElementById('player2-score');
     const countdownDisplay = document.getElementById('countdown');
@@ -24,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('keydown', movePaddle);
     startButton.addEventListener('click', startButtonClick);
 
-    // Functions
+        
     function createPaddle(id) {
         const paddle = document.createElement('div');
         paddle.id = id;
@@ -43,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function startButtonClick() {
         console.log("Start button clicked");
         startButton.style.display = 'none'; // Hide the start button
+        gameActive = true;
         performCountdown();
     }
 
@@ -62,19 +65,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function resetBall() {
+        ballSpeedX = 0;
+        ballSpeedY = 0;
+        console.log("is game active? ", gameActive);
+
         ball.style.left = `${gameArea.clientWidth / 2 - ball.offsetWidth / 2}px`;
         ball.style.top = `${gameArea.clientHeight / 2 - ball.offsetHeight / 2}px`;
-        ballSpeedX = 1;
-        ballSpeedY = 1; // Reset the ball speed direction
         
-        moveBall();
+        if (!gameActive) 
+            return;  // Ensure no reset if the game is no longer active
+    
+        // Reset speeds to a manageable level
+        ballSpeedX = -0.75; 
+        ballSpeedY = (Math.random() < 0.5 ? -1 : 1) * 0.75;
+    
+        setTimeout(() => {
+            if (gameActive) {  // Only restart the game loop if the game is still active
+            requestAnimationFrame(moveBall);}
+        }, 500); // Pause for half a second before starting motion again
     }
     
     
     function startGame() {
         console.log("Game starting...");
         resetBall();
-        moveBall();
+        animationFrameId = requestAnimationFrame(moveBall);
         startGameTimer();
     }
 
@@ -99,94 +114,105 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-
     function moveBall() {
-        movementInterval = setInterval(function() {
-            let nextX = ball.offsetLeft + ballSpeedX;
-            let nextY = ball.offsetTop + ballSpeedY;
+        let nextX = ball.offsetLeft + ballSpeedX;
+        let nextY = ball.offsetTop + ballSpeedY;
     
-            // Collision with top or bottom
-            if (nextY <= 0 || nextY + ball.offsetHeight >= gameArea.clientHeight) {
-                ballSpeedY *= -1;
-            }
-    
-            // Collision with paddles
-            if (checkPaddleCollision(nextX, nextY)) {
-                ballSpeedX *= -1; // Reverse the horizontal direction
-            }
-    
-            // Handle player-ball collisions
-            if (nextX - ball.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
-                if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball.offsetHeight >= paddle1.offsetTop) {
-                    nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball.offsetWidth;
-                    ballSpeedX = 1; // Set the ball's horizontal speed
-                    ballSpeedY *= -1; // Reverse the vertical direction
-                }
-            }
-    
-            if (nextX <= paddle2.offsetLeft + paddle2.offsetWidth && nextX + ball.offsetWidth >= paddle2.offsetLeft) {
-                if (nextY <= paddle2.offsetTop + paddle2.offsetHeight && nextY + ball.offsetHeight >= paddle2.offsetTop) {
-                    nextX = paddle2.offsetLeft - ball.offsetWidth;
-                    ballSpeedX = -1; // Set the ball's horizontal speed
-                    ballSpeedY *= -1; // Reverse the vertical direction
-                }
-            }
-    
-            // Update ball position
-            ball.style.left = `${nextX}px`;
-            ball.style.top = `${nextY}px`;
-    
-            // Check for game over condition
-            checkGameOver(ball.offsetLeft);
-    
-            // Check for new serve
-            if (ball.offsetLeft + ball.offsetWidth < 0 || ball.offsetLeft > gameArea.clientWidth) {
-                resetBall();
-                ballSpeedX = 2; // Set the ball's horizontal speed for the new serve
-                ballSpeedY = Math.random() < 0.5 ? -2 : 2; // Randomize the vertical direction
-            }
-        }, 20);
-    }
-    
-    // Add event listener to prevent default scrolling behavior
-    document.addEventListener('keydown', function(event) {
-        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-            event.preventDefault();
+        // Collision with top or bottom
+        if (nextY <= 0 || nextY + ball.offsetHeight >= gameArea.clientHeight) {
+            ballSpeedY = -ballSpeedY;
+            nextY = nextY <= 0 ? 0 : gameArea.clientHeight - ball.offsetHeight;  // Adjust to remain within bounds
         }
-    });
-
-    function checkPaddleCollision(nextX, nextY) {
-        let ballBounds = ball.getBoundingClientRect();
-        let paddle1Bounds = paddle1.getBoundingClientRect();
-        let paddle2Bounds = paddle2.getBoundingClientRect();
-
-        return (
-            (nextX <= paddle1Bounds.right && ballBounds.right >= paddle1Bounds.left &&
-                nextY + ball.offsetHeight >= paddle1Bounds.top && nextY <= paddle1Bounds.bottom) ||
-            (nextX + ball.offsetWidth >= paddle2Bounds.left && ballBounds.left <= paddle2Bounds.right &&
-                nextY + ball.offsetHeight >= paddle2Bounds.top && nextY <= paddle2Bounds.bottom)
-        );
+    
+        // Check paddle collision and reverse X direction if needed
+        if (checkPaddleCollision(nextX, nextY)) {
+            ballSpeedX = -ballSpeedX;
+            nextX += ballSpeedX * 1.5; // Move ball back out of collision
+        }
+    
+        // Update ball position
+        ball.style.left = `${nextX}px`;
+        ball.style.top = `${nextY}px`;
+    
+        // Check if the ball hits the left or right boundary of the game area
+        checkGameOver(nextX);
     }
+    
+    
+    function checkPaddleCollision(nextX, nextY) {
+        const ballWidth = 20;  // Ball dimensions
+        const ballHeight = 20;
+    
+        const ballNextRect = {
+            left: nextX,
+            top: nextY,
+            right: nextX + ballWidth,
+            bottom: nextY + ballHeight
+        };
+    
+        const gameAreaWidth = document.getElementById('pong-game').clientWidth;  // Assuming the ID of your game container
+    
+        // For the left paddle
+        const paddle1Rect = {
+            left: paddle1.offsetLeft,
+            top: paddle1.offsetTop - paddle1.offsetHeight / 2,
+            right: paddle1.offsetLeft + paddle1.offsetWidth,
+            bottom: paddle1.offsetTop + paddle1.offsetHeight / 2
+        };
+    
+        // Adjusted For the right paddle to trigger collision slightly earlier
+        const rightOffset = 20; // The CSS right property value used
+        const collisionAdjustment = -1; // Extend the paddle's collision area 5px to the left
+        const paddle2Rect = {
+            left: gameAreaWidth - paddle2.offsetWidth - rightOffset - collisionAdjustment,
+            top: paddle2.offsetTop - paddle2.offsetHeight / 2,
+            right: gameAreaWidth - rightOffset,
+            bottom: paddle2.offsetTop + paddle2.offsetHeight / 2
+        };
+    
+        let collidesWithPaddle1 = (ballNextRect.right > paddle1Rect.left && ballNextRect.left < paddle1Rect.right &&
+            ballNextRect.bottom > paddle1Rect.top && ballNextRect.top < paddle1Rect.bottom);
+        let collidesWithPaddle2 = (ballNextRect.right > paddle2Rect.left && ballNextRect.left < paddle2Rect.right &&
+            ballNextRect.bottom > paddle2Rect.top && ballNextRect.top < paddle2Rect.bottom);
+    
+        if (collidesWithPaddle1 || collidesWithPaddle2) {
+            console.log("Collision detected with:", collidesWithPaddle1 ? "Paddle 1" : "Paddle 2");
+        }
+    
+        return collidesWithPaddle1 || collidesWithPaddle2;
+    }
+    
+    
+
 
     function updateScore(player) {
         const scoreElement = player === 'player1' ? player1Score : player2Score;
-        let score = parseInt(scoreElement.textContent.split(': ')[1]) + 1;
-        let playerLabel = player === 'player1' ? playerName : 'Player 2';  // Use player name or "Player 2"
-        scoreElement.textContent = `${playerLabel}: ${score}`;
+        let currentScore = parseInt(scoreElement.textContent.split(':')[1].trim());
+        scoreElement.textContent = `${player === 'player1' ? playerName : 'Player 2'}: ${currentScore + 1}`;
+    }
+    
+    
+    function checkGameOver(nextX) {
+        const gameAreaWidth = document.getElementById('pong-game').clientWidth;
+        const ballWidth = 20;  // Assuming ball width is still 20px
+        const leftWallOffset = 2;  // Adjust this value to control collision with the left wall
+        const rightWallOffset = -2;  // Adjust this value to control collision with the right wall
+    
+        // Check if the ball hits the left or right wall
+        if (nextX < 0 - leftWallOffset) {
+            console.log('Ball hit the left wall. Player 2 scores!');
+            updateScore('player2');
+            resetBall();
+        } else if (nextX + ballWidth > gameAreaWidth + rightWallOffset) {
+            console.log('Ball hit the right wall. Player 1 scores!');
+            updateScore('player1');
+            resetBall();
+        } else {
+            requestAnimationFrame(moveBall);
+        }
     }
     
 
-    function checkGameOver(ballLeft) {
-        if (ballLeft + ball.offsetWidth < 0) {
-            updateScore('player2');
-            clearInterval(movementInterval);
-            resetBall();
-        } else if (ballLeft > gameArea.clientWidth) {
-            updateScore('player1');
-            clearInterval(movementInterval);
-            resetBall();
-        }
-    }
 
    
 
@@ -197,8 +223,12 @@ document.addEventListener('DOMContentLoaded', function () {
             timeLeft--;
             gameTimerDisplay.textContent = `Time Left: ${formatTime(timeLeft)}`;
             if (timeLeft === 0) {
+                //resetBall();
+                cancelAnimationFrame(animationFrameId);
+                gameActive = false;
                 clearInterval(timer);
-                clearInterval(movementInterval);
+                paddle1.display = 'none';
+                paddle2.display = 'none';
                 ball.style.display = 'none'; // Hide the ball
                 announceWinner();
             }
