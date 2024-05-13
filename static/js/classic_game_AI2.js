@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let movementInterval;
     let movementInterval2;
     let botMovementInterval;
+    let gameActive = false;
+    let ballSpeedX2 = 1.1; 
+    let ballSpeedY2 = 1.1;
+    let ballSpeedX = -1.1; 
+    let ballSpeedY = 1.1;
 
     // Setup the Pong game elements
     const gameArea = document.getElementById('pong-game');
@@ -59,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function startPongGame(player1Index, player2Index) {
         console.log("Game starting...");
+        gameActive = true;
         resetBall(); // Position the ball in the middle
         resetBall2();
         moveBall(); // Start moving the ball
@@ -84,6 +90,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function endGame() {
+        if (!gameActive) {
+            return; // If game is already inactive, do nothing.
+        }
+        gameActive = false;
         clearInterval(botMovementInterval);
         clearInterval(movementInterval);
         clearInterval(movementInterval2);
@@ -166,21 +176,32 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function startBotMovement() {
-        const paddleSpeed = 10;
+        const paddleSpeed = 40;
         const topBoundary = 40;
         const bottomBoundary = gameArea.clientHeight - paddle2.offsetHeight + 15;
-
+    
         botMovementInterval = setInterval(() => {
+            // Calculate center positions of the balls and the paddle
             let ballY = ball.offsetTop + ball.offsetHeight / 2;
+            let ball2Y = ball2.offsetTop + ball2.offsetHeight / 2;
             let paddleY = paddle2.offsetTop + paddle2.offsetHeight / 2;
-            if (ballY < paddleY - paddleSpeed) {
+    
+            // Calculate horizontal distances from the paddle to each ball
+            let ballDistance = Math.abs(ball.offsetLeft - paddle2.offsetLeft);
+            let ball2Distance = Math.abs(ball2.offsetLeft - paddle2.offsetLeft);
+    
+            // Determine which ball is closer in the horizontal direction
+            let targetBallY = (ballDistance < ball2Distance) ? ballY : ball2Y;
+    
+            // Move the paddle towards the closer ball
+            if (targetBallY < paddleY - paddleSpeed) {
                 paddle2.style.top = `${Math.max(paddle2.offsetTop - paddleSpeed, topBoundary)}px`;
-            } else if (ballY > paddleY + paddleSpeed) {
+            } else if (targetBallY > paddleY + paddleSpeed) {
                 paddle2.style.top = `${Math.min(paddle2.offsetTop + paddleSpeed, bottomBoundary)}px`;
             }
-        }, 1000);
+        }, 500);
     }
-
+    
     // Event listeners
     document.addEventListener('keydown', movePaddle);
     startButton.addEventListener('click', startGameSequence);    
@@ -196,37 +217,37 @@ document.addEventListener('DOMContentLoaded', function () {
     
 
     function moveBall2() {
-        let ballSpeedX = 1; 
-        let ballSpeedY = 1;
+        ballSpeedX2 = 1; 
+        ballSpeedY2 = 1;
         movementInterval2 = setInterval(function() {
-            let nextX = ball2.offsetLeft + ballSpeedX;
-            let nextY = ball2.offsetTop + ballSpeedY;
+            let nextX = ball2.offsetLeft + ballSpeedX2;
+            let nextY = ball2.offsetTop + ballSpeedY2;
     
             // Collision with top or bottom boundaries
             if (nextY <= 0 || nextY >= gameArea.clientHeight - ball2.offsetHeight) {
-                ballSpeedY *= -1;
+                ballSpeedY2 *= -1;
             }
     
             // Handle player-ball collisions
             if (nextX - ball2.offsetWidth <= paddle1.offsetLeft + paddle1.offsetWidth && nextX >= paddle1.offsetLeft) {
                 if (nextY <= paddle1.offsetTop + paddle1.offsetHeight && nextY + ball2.offsetHeight >= paddle1.offsetTop) {
                     nextX = paddle1.offsetLeft + paddle1.offsetWidth + ball2.offsetWidth;
-                    ballSpeedX *= -1;
-                    ballSpeedY *= -1;
+                    ballSpeedX2 *= -1;
+                    ballSpeedY2 *= -1;
                 }
             }
     
     
             // Collision with right paddle
-            if (nextX + ball.offsetWidth >= paddle2.offsetLeft && nextY + ball.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle2.offsetLeft - ball.offsetWidth}px`;  // Move ball outside the paddle
+            if (nextX + ball2.offsetWidth >= paddle2.offsetLeft && nextY + ball2.offsetHeight > paddle2.offsetTop && nextY < paddle2.offsetTop + paddle2.offsetHeight) {
+                ballSpeedX2 *= -1;  // Reverse the horizontal direction
+                ball2.style.left = `${paddle2.offsetLeft - ball2.offsetWidth}px`;  // Move ball outside the paddle
             }
 
             // Collision with left paddle
-            if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth && nextY + ball.offsetHeight > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
-                ballSpeedX *= -1;  // Reverse the horizontal direction
-                ball.style.left = `${paddle1.offsetLeft + paddle1.offsetWidth}px`;  // Move ball outside the paddle
+            if (nextX <= paddle1.offsetLeft + paddle1.offsetWidth && nextY + ball2.offsetHeight > paddle1.offsetTop && nextY < paddle1.offsetTop + paddle1.offsetHeight) {
+                ballSpeedX2 *= -1;  // Reverse the horizontal direction
+                ball2.style.left = `${paddle1.offsetLeft + paddle1.offsetWidth}px`;  // Move ball outside the paddle
             }
 
 
@@ -247,14 +268,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function resetBall2() {
+        ballSpeedX2 = 0;
+        ballSpeedY2 = 0;
+
         ball2.style.left = `${gameArea.clientWidth / 2 - ball2.offsetWidth / 2}px`;
         ball2.style.top = `${gameArea.clientHeight / 2 - ball2.offsetHeight / 2}px`;
+
+        if (!gameActive) {
+            return;  // Ensure no reset or movement starts if the game is no longer active
+        }
+        
+        ballSpeedX2 = -1; // Standard initial speed
+        ballSpeedY2 = 1;
     }
     
 
     function moveBall() {
-        let ballSpeedX = -1;
-        let ballSpeedY = 1;
+        ballSpeedX = -1;
+        ballSpeedY = 1;
         movementInterval = setInterval(function() {
             let nextX = ball.offsetLeft + ballSpeedX;
             let nextY = ball.offsetTop + ballSpeedY;
@@ -306,8 +337,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function resetBall() {
+        ballSpeedX = 0;
+        ballSpeedY = 0;
+    
         ball.style.left = `${gameArea.clientWidth / 2 - ball.offsetWidth / 2}px`;
         ball.style.top = `${gameArea.clientHeight / 2 - ball.offsetHeight / 2}px`;
+        
+        if (!gameActive) {
+            return;  // Ensure no reset or movement starts if the game is no longer active
+        }
+        
+        ballSpeedX = 1; // Standard initial speed
+        ballSpeedY = 1;
+    
     }
     
 
@@ -322,6 +364,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
     function updateScore(player) {
+        if (!gameActive) {
+            return; // Avoid updating the score if the game is not active
+        }
         const scoreElement = player === 'player1' ? currentScorePlayer1 : currentScorePlayer2;
         let score = parseInt(scoreElement.textContent.split(': ')[1]) + 1;
         let playerLabel = player === 'player1' ? playerName : 'AI';  

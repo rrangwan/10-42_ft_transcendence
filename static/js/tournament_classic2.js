@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitAliasesButton = document.getElementById('submit-aliases');
     const startButton = document.getElementById('start-button');
     const aliasInputs = document.getElementById('alias-inputs');
+    const gameStatus = document.getElementById('status');
 
 
      
@@ -96,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!countdown) {
                 clearInterval(interval);
                 countdownElement.textContent = '';
+                gameStatus.textContent = '';
                 startPongGame(player1Index, player2Index);
             }
         }, 1000);
@@ -144,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function concludeRound(player1Index, player2Index) {
-        alert(`Round over between ${playerNames[player1Index]} and ${playerNames[player2Index]}`);
+        // alert(`Round over between ${playerNames[player1Index]} and ${playerNames[player2Index]}`);
         if (gameSequence < 3) {
             startGameSequence(); // Setup the next round or end the game
         } else {
@@ -354,14 +356,14 @@ document.addEventListener('keydown', function(event) {
         let result;
         if (winners.length > 1) {
             if (winners.includes(playerNames[0])) {
-                alert('The game is a draw between: ' + winners.join(', '));
+                gameStatus.textContent = 'The game is a draw between: ' + winners.join(', ');
                 result = 'Draw';
             } else {
-                alert('Player 1 did not win. The winners are: ' + winners.join(', '));
+                gameStatus.textContent = 'The winners are: ' + winners.join(', ');
                 result = 'Lose';
             }
         } else {
-            alert('Winner is: ' + winners[0]);
+            gameStatus.textContent = 'Winner is: ' + winners[0];
             result = (winners[0] === playerNames[0]) ? 'Win' : 'Lose';
         }
 
