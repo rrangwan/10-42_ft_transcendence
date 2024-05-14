@@ -239,10 +239,14 @@ msgstr "No games played yet for this type."
 msgid "Press Start to play!"
 msgstr "Press Start to play!"
 
-#: templates/base.html:53 templates/base.html:54
+#: templates/base.html:54 templates/base.html:55
 msgid "Font"
 msgstr "Font"
 
-#: templates/base.html:55
+#: templates/base.html:51
+msgid "Font Size"
+msgstr "Font Size"
+
+#: templates/base.html:56
 msgid "Reset Font Size"
 msgstr "Reset Font Size"

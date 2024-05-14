@@ -1,0 +1,29 @@
+rrangwan@lab3r8s7 testt % docker exec -it testt-db-1 bash
+root@8a7bbf568d11:/# \dt
+bash: dt: command not found
+root@8a7bbf568d11:/# ls
+bin  boot  dev	docker-entrypoint-initdb.d  etc  home  lib  lib64  media  mnt  opt  proc  root	run  sbin  srv	sys  tmp  usr  var
+root@8a7bbf568d11:/# psql -U rrangwan -d trans_db
+psql (16.3 (Debian 16.3-1.pgdg120+1))
+Type "help" for help.
+
+trans_db=# \dt
+                   List of relations
+ Schema |            Name            | Type  |  Owner
+--------+----------------------------+-------+----------
+ public | auth_group                 | table | rrangwan
+ public | auth_group_permissions     | table | rrangwan
+ public | auth_permission            | table | rrangwan
+ public | auth_user                  | table | rrangwan
+ public | auth_user_groups           | table | rrangwan
+ public | auth_user_user_permissions | table | rrangwan
+ public | django_admin_log           | table | rrangwan
+ public | django_content_type        | table | rrangwan
+ public | django_migrations          | table | rrangwan
+ public | django_session             | table | rrangwan
+ public | webapp_game                | table | rrangwan
+ public | webapp_userprofile         | table | rrangwan
+(12 rows)
+
+trans_db=# SELECT * FROM auth_user;
+trans_db=# \q

@@ -74,15 +74,15 @@ msgstr "تنس الطاولة مع الذكاء الإصطناعي بكرتين"
 
 #: templates/games.html:65
 msgid "tic-tac-toe Classic"
-msgstr ""
+msgstr "إكس أو الكلاسيكية"
 
 #: templates/games.html:73
-msgid "بطولة إكس أو الكلاسيكية"
-msgstr ""
+msgid "tic-tac-toe Classic Tournament"
+msgstr "بطولة إكس أو الكلاسيكية"
 
 #: templates/games.html:81
-msgid "إكس أو مع الذكاء الإصطناعي"
-msgstr ""
+msgid "tic-tac-toe Classic AI"
+msgstr "إكس أو مع الذكاء الإصطناعي"
 
 #: templates/games.html:91
 msgid "tic-tac-toe Modified"
@@ -240,10 +240,14 @@ msgstr "لم تم لعبها بعد"
 msgid "Press Start to play!"
 msgstr "أضعط أبدأ للعب"
 
-#: templates/base.html:53 templates/base.html:54
+#: templates/base.html:54 templates/base.html:55
 msgid "Font"
+msgstr "الخط"
+
+#: templates/base.html:51
+msgid "Font Size"
 msgstr "حجم الخط"
 
-#: templates/base.html:55
+#: templates/base.html:56
 msgid "Reset Font Size"
 msgstr "حجم الخط التلقائي"

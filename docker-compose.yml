@@ -21,6 +21,7 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      DB_HOST: db  # This sets the DB_HOST environment variable
     depends_on:
       - db
 

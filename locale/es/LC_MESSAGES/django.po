@@ -239,10 +239,14 @@ msgstr "No hay ningun juegos de este tipo."
 msgid "Press Start to play!"
 msgstr "Pulsa Comienza para jugar!"
 
-#: templates/base.html:53 templates/base.html:54
+#: templates/base.html:54 templates/base.html:55
 msgid "Font"
 msgstr "Fuente"
 
-#: templates/base.html:55
+#: templates/base.html:51
+msgid "Font Size"
+msgstr "La fuente"
+
+#: templates/base.html:56
 msgid "Reset Font Size"
 msgstr "Restablecelo"
